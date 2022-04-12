@@ -1,22 +1,34 @@
 <template>
   <div class="homeView">
-    <el-header class="homeView-header">Header</el-header>
+    <el-header class="homeView-header">
+      <div class="left">
+        <h2>相森记</h2>
+      </div>
+      <div class="right">
+        <span>退出登录</span>
+      </div>
+    </el-header>
     <el-container class="homeView-container">
-      <el-aside class="homeView-container-aside" width="200px">Aside</el-aside>
-      <el-main class="homeView-container-main">Main</el-main>
+      <el-aside class="homeView-container-aside" width="200px">
+        <Aside />
+      </el-aside>
+      <el-main class="homeView-container-main">
+        <router-view />
+      </el-main>
     </el-container>
-    <!-- <img alt="Vue logo" src="../assets/logo.png" /> -->
-    <!-- <HelloWorld msg="Welcome to Your Vue.js App" /> -->
   </div>
 </template>
 
 <script>
-// import HelloWorld from "@/components/HelloWorld.vue";
+import Aside from "@/components/Aside.vue";
 
 export default {
   name: "homeView",
   components: {
-    // HelloWorld,
+    Aside,
+  },
+  data() {
+    return {};
   },
 };
 </script>
@@ -31,8 +43,10 @@ export default {
 
   &-header {
     height: 50px;
-    line-height: 50px;
     background-color: #304156;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     flex-shrink: 0;
   }
 
@@ -42,7 +56,6 @@ export default {
 
     &-aside {
       text-align: left;
-      padding-left: 20px;
       line-height: 50px;
       background-color: #495a6f;
       flex-shrink: 0;
