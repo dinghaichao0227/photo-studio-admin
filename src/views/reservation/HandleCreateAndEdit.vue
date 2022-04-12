@@ -31,12 +31,11 @@ export default {
   watch: {
     isVisible(newValue) {
       this.dialogFormVisible = newValue;
-      console.log(newValue)
+      console.log(newValue);
     },
     dialogFormVisible(newVal) {
       this.$emit("dialog_visible", newVal);
-      console.log(newVal, 22)
-
+      console.log(newVal, 22);
     },
   },
   data() {

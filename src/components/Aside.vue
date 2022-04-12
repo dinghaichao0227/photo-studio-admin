@@ -1,16 +1,16 @@
 <template>
-  <div class="Aside">
+  <div class="aside">
     <el-menu
       :default-active="$route.name"
       unique-opened
       :router="true"
       class="el-menu-vertical-demo"
       @select="handleOpen"
-      background-color="#495a6f"
-      text-color="#fff"
-      active-text-color="#ffd04b"
+      background-color="#EEEEEE"
+      text-color="#000"
+      active-text-color="#fff"
     >
-      <el-menu-item
+      <el-menu-item class="menu-item"
         v-for="item in navigation"
         :key="item.name"
         :index="item.name"
@@ -53,7 +53,9 @@ export default {
   },
   methods: {
     handleOpen(index) {
-      this.$router.push({ name: index }).catch((error) => error);
+
+      this.$router.push({ name: index });
+      this.$router.push({ name: index });
     },
     IconManagement(iconList) {
       return iconList && iconList.icon ? iconList.icon : "el-icon-setting";
@@ -68,5 +70,8 @@ export default {
 <style lang="scss" scoped>
 .el-menu-vertical-demo {
   border-right: none;
+}
+.el-menu-item.is-active {
+  background-color: #009688 !important;
 }
 </style>

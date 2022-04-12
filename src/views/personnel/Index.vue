@@ -1,5 +1,5 @@
 <template>
-  <div class="personnel">人员</div>
+  <div class="personal">人员</div>
 </template>
 
 <script>

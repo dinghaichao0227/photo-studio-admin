@@ -1,11 +1,11 @@
 <template>
   <div class="homeView">
     <el-header class="homeView-header">
-      <div class="left">
-        <h2>相森记</h2>
+      <div class="homeView-header-left">
+        <h3>相森记</h3>
       </div>
-      <div class="right">
-        <span>退出登录</span>
+      <div class="homeView-header-right">
+        <span class="tab" @click="signOut">退出登录</span>
       </div>
     </el-header>
     <el-container class="homeView-container">
@@ -30,6 +30,12 @@ export default {
   data() {
     return {};
   },
+  methods: {
+    signOut() {
+      sessionStorage.clear("token");
+      this.$router.push("/login");
+    },
+  },
 };
 </script>
 
@@ -42,12 +48,17 @@ export default {
   overflow: hidden;
 
   &-header {
-    height: 50px;
-    background-color: #304156;
+    height: 40px;
+    background-color: #000;
+    color: #fff;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-shrink: 0;
+
+    &-right {
+      cursor: pointer;
+    }
   }
 
   &-container {
@@ -57,14 +68,14 @@ export default {
     &-aside {
       text-align: left;
       line-height: 50px;
-      background-color: #495a6f;
+      background-color: #eeeeee;
       flex-shrink: 0;
       overflow-x: auto;
       overflow-y: auto;
     }
     &-main {
       flex: 1;
-      background-color: #e9eef3;
+      background-color: #f1f1f1;
       overflow-x: hidden;
       overflow-y: auto;
     }

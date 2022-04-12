@@ -1,4 +1,5 @@
 import HomeView from "../views/layout/HomeView.vue";
+import Login from "../views/login/Index.vue";
 
 export const navigation = [
   {
@@ -36,9 +37,16 @@ export const navigation = [
 export const routes = [
   {
     path: "/",
-    name: "Home",
-    redirect: "/reservation",
+    name: "HomeView",
+    redirect: {name: "Reservation" },
     component: HomeView,
     children: [...navigation],
+  },
+  {
+    path: "/login",
+    name: "Login",
+    component: Login,
+
+    // component: () => import("../views/login/Index.vue"),
   },
 ];
