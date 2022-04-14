@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import Aside from "@/components/Aside.vue";
+import Aside from "./Aside.vue";
 
 export default {
   name: "homeView",
@@ -64,6 +64,7 @@ export default {
   &-container {
     display: flex;
     flex: 1;
+    overflow-y: auto;
 
     &-aside {
       text-align: left;

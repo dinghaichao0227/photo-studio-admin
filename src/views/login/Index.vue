@@ -101,9 +101,9 @@ export default {
     }
   }
   &-right {
-      width: 550px;
-      height: 500px;
-     
+    width: 550px;
+    height: 500px;
+
     &-image {
       width: 100%;
       height: 100%;
@@ -114,8 +114,8 @@ export default {
     }
   }
 }
-.el-input--medium .el-input__inner {
-  height: 100px;
-  line-height: 100px;
-}
+// .el-input--medium .el-input__inner {
+//   height: 100px;
+//   line-height: 100px;
+// }
 </style>

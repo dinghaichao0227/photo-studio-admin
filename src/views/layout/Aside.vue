@@ -10,12 +10,13 @@
       text-color="#000"
       active-text-color="#fff"
     >
-      <el-menu-item class="menu-item"
+      <el-menu-item
+        class="menu-item"
         v-for="item in navigation"
         :key="item.name"
         :index="item.name"
       >
-        <i :class="IconManagement(item.meta)"></i>
+        <i :class="iconManagement(item.meta)"></i>
         <span slot="title">{{ item.meta.title }}</span>
       </el-menu-item>
       <!-- <el-menu-item index="Reservation">
@@ -53,11 +54,10 @@ export default {
   },
   methods: {
     handleOpen(index) {
-
       this.$router.push({ name: index });
-      this.$router.push({ name: index });
+      // this.$router.push({ name: index }).catch((error)=>error);
     },
-    IconManagement(iconList) {
+    iconManagement(iconList) {
       return iconList && iconList.icon ? iconList.icon : "el-icon-setting";
     },
     handleClose(key, keyPath) {
