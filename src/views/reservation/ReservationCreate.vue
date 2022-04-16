@@ -28,15 +28,27 @@
           :label-width="formLabelWidth"
           prop="date"
         >
-          <el-col :span="12">
-            <el-form-item prop="date1">
-              <el-time-picker
-                placeholder="开始时间"
-                v-model="form.contact_time"
-                style="width: 100%"
-              ></el-time-picker>
-            </el-form-item>
-          </el-col>
+          <el-time-select
+            placeholder="起始时间"
+            v-model="form.contact_time1"
+            :picker-options="{
+              start: '08:30',
+              step: '00:15',
+              end: '18:30',
+            }"
+          >
+          </el-time-select>
+          <el-time-select
+            placeholder="结束时间"
+            v-model="form.contact_time2"
+            :picker-options="{
+              start: '08:30',
+              step: '00:15',
+              end: '18:30',
+              minTime: form.contact_time1,
+            }"
+          >
+          </el-time-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -50,7 +62,6 @@
 </template>
 
 <script>
-import { time } from "@/utils/Time.js";
 import { createReservation } from "@/api/reservation.js";
 export default {
   name: "ReservationCreate",
@@ -83,9 +94,7 @@ export default {
             trigger: "blur",
           },
         ],
-        // date: [
-        //   {required: true}
-        // ],
+        date: [{ required: true }],
         // date1: [
         //   {
         //     type: "date",
@@ -124,7 +133,8 @@ export default {
       form: {
         name: "",
         phoneCode: "",
-        contact_time: "",
+        contact_time1: "",
+        contact_time2: "",
         status: "",
         remarks: "",
       },
@@ -143,7 +153,7 @@ export default {
         const res = await createReservation({
           name: this.form.name,
           phone_code: this.form.phoneCode,
-          contact_time: time(this.form.contact_time),
+          contact_time: this.form.contact_time1 + "-" + this.form.contact_time2,
           remarks: this.form.remarks,
           status: this.form.status,
         });

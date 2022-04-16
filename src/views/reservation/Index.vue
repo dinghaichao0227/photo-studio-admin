@@ -33,9 +33,6 @@
       <el-table-column label="客户手机号" prop="phone_code" width="150px">
       </el-table-column>
       <el-table-column label="沟通时间" prop="contact_time" width="120px">
-        <!-- <template slot-scope="scope">
-          {{ time(scope.row.contact_time) }}
-        </template> -->
       </el-table-column>
       <el-table-column label="预约状态" prop="status" width="100px">
         <template slot-scope="scope">
@@ -46,21 +43,18 @@
         </template>
       </el-table-column>
       <el-table-column label="创建时间" prop="created_at" width="150">
-        <!-- <template slot-scope="scope">
-          {{ formatTime(scope.row.created_at) }}
-        </template> -->
+        <template slot-scope="scope">
+          {{ purifyTime(scope.row.created_at) }}
+        </template>
       </el-table-column>
       <el-table-column label="修改时间" prop="updated_at" width="150">
-        <!-- <template slot-scope="scope">
+        <template slot-scope="scope">
           {{ purifyTime(scope.row.updated_at) }}
-        </template> -->
+        </template>
       </el-table-column>
       <el-table-column label="备注" prop="remarks" width="auto">
       </el-table-column>
       <el-table-column align="right">
-        <!-- <template slot="header" slot-scope="">
-          <el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
-        </template> -->
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
             >Edit</el-button
@@ -95,7 +89,7 @@
 import ReservationCreate from "./ReservationCreate.vue";
 import ReservationEdit from "./ReservationEdit.vue";
 import { getReservation } from "@/api/reservation.js";
-// import { formatTime, time } from "@/utils/Time.js";
+import { purifyTime } from "@/utils/Time.js";
 export default {
   name: "Reservation",
   components: {
@@ -120,7 +114,7 @@ export default {
     };
   },
   methods: {
-    // formatTime,
+    purifyTime,
     // time,
     handleSizeChange(val) {
       this.pageAndSize.size = val;
@@ -140,6 +134,7 @@ export default {
       try {
         const res = await getReservation(this.pageAndSize);
         this.tableData = res.data.date;
+        this.tableData.reverse();
         this.total = res.data.date.length;
         if (res.data.code === 200) {
           this.isLoading = false;
@@ -160,7 +155,7 @@ export default {
       this.isDialogCreateVisible = true;
     },
     handleEdit(index, row) {
-      // console.log(index, row);
+      console.log(index, row);
       this.isEditDialogVisible = true;
       this.formData.push(row);
       // console.log(this.formData, 77)

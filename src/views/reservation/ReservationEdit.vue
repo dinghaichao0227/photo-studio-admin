@@ -28,15 +28,27 @@
           :label-width="formLabelWidth"
           prop="contactTime"
         >
-          <el-time-picker
-            is-range
-            v-model="form.contactTime"
-            range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            placeholder="选择时间范围"
+          <el-time-select
+            placeholder="起始时间"
+            v-model="form.contact_time1"
+            :picker-options="{
+              start: '08:30',
+              step: '00:15',
+              end: '18:30',
+            }"
           >
-          </el-time-picker>
+          </el-time-select>
+          <el-time-select
+            placeholder="结束时间"
+            v-model="form.contact_time2"
+            :picker-options="{
+              start: '08:30',
+              step: '00:15',
+              end: '18:30',
+              minTime: form.contact_time1,
+            }"
+          >
+          </el-time-select>
         </el-form-item>
         <div class="bottom">
           <el-form-item label="状态：" :label-width="formLabelWidth">
@@ -96,7 +108,6 @@ export default {
     return {
       isDialogEditVisible: false,
       tableId: "",
-      contactTime: [new Date(2022, 9, 10, 8, 40), new Date(2022, 9, 10, 9, 40)],
       rules: {
         name: [
           { required: true, message: "请输入名字", trigger: "blur" },
@@ -133,7 +144,8 @@ export default {
       form: {
         name: "",
         phoneCode: "",
-        contactTime: "",
+        contact_time1: "",
+        contact_time2: "",
         status: "",
         remarks: "",
       },
@@ -145,6 +157,12 @@ export default {
       this.formData.map((item) => {
         // console.log(item);
         this.form = item;
+        item.contact_time.replace("-", ",");
+        let time = [];
+        time.push(item.contact_time.replace("-", ","));
+        console.log(time);
+        // console.log(item.contact_time.replace("-", ","));
+        // console.log(item.contact_time.split(",").join());
         return;
       });
       // console.log(this.form)
@@ -191,7 +209,7 @@ export default {
   }
   .contactTime {
     ::v-deep .el-input__inner {
-      width: 500px;
+      width: 190px;
     }
   }
 }
