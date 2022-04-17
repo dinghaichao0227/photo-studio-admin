@@ -108,7 +108,6 @@ export default {
             trigger: 'blur',
           },
         ],
-        contactTime: [{ required: true, message: '请选择时间' }],
       },
       statusList: [
         {
@@ -131,8 +130,8 @@ export default {
       form: {
         name: '',
         phone_code: '',
-        contact_time1: '',
-        contact_time2: '',
+        contact_time1: '9:00',
+        contact_time2: '12:00',
         status: '',
         remarks: '',
       },
@@ -142,20 +141,15 @@ export default {
   methods: {
     loadingData() {
       this.formData.map((item) => {
-        // console.log(item);
         this.form.name = item.name;
         this.form.phone_code = item.phone_code;
         this.form.status = item.status;
         this.form.remarks = item.remarks;
         let timeList = [];
-        timeList.push(this.time.replace('-', ','));
+        timeList.push(item.contact_time.replace('-', ','));
         timeList[0].split(',');
-        console.log(timeList[0].split(','));
         this.form.contact_time1 = timeList[0].split(',')[0];
-        console.log(this.form.contact_time1, 80);
         this.form.contact_time2 = timeList[0].split(',')[1];
-        console.log(this.form.contact_time2, 70);
-        return;
       });
       // console.log(this.form)
     },
@@ -168,16 +162,10 @@ export default {
       }
     },
     cancelDialog() {
-      this.$refs.form.resetFields();
       this.isDialogEditVisible = false;
     },
     handleDialogClosed() {
-      this.$refs.form.resetFields();
-      // this.form.name = "";
-      // this.form.phoneCode ="";
-      // this.form.contactTime = "";
-      // this.form.status = "";
-      // this.form.remarks = "";
+      //
     },
   },
   mounted() {
