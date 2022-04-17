@@ -7,18 +7,10 @@
     >
       <el-form :model="form" :rules="rules" ref="form">
         <div class="top">
-          <el-form-item
-            label="姓名："
-            prop="name"
-            :label-width="formLabelWidth"
-          >
+          <el-form-item label="姓名：" prop="name" :label-width="formLabelWidth">
             <el-input v-model="form.name" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item
-            label="手机号："
-            prop="phone_code"
-            :label-width="formLabelWidth"
-          >
+          <el-form-item label="手机号：" prop="phone_code" :label-width="formLabelWidth">
             <el-input v-model="form.phone_code" autocomplete="off"></el-input>
           </el-form-item>
         </div>
@@ -62,11 +54,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item
-            class="remarks"
-            label="备注："
-            :label-width="formLabelWidth"
-          >
+          <el-form-item class="remarks" label="备注：" :label-width="formLabelWidth">
             <el-input
               v-model="form.remarks"
               maxlength="50"
@@ -79,9 +67,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancelDialog" size="mini">取 消</el-button>
-        <el-button type="primary" @click="onSubmit" size="mini"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="onSubmit" size="mini">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -89,10 +75,11 @@
 
 <script>
 export default {
-  name: "ReservationCreate",
+  name: 'ReservationCreate',
   props: {
     isEditVisible: { type: Boolean, required: true },
     formData: Array,
+    time: String,
   },
   watch: {
     isEditVisible(newValue) {
@@ -100,69 +87,74 @@ export default {
       // this.loadingData();
     },
     isDialogEditVisible(newVal) {
-      this.$emit("dialog-change", newVal);
+      this.$emit('dialog-change', newVal);
       this.loadingData();
     },
   },
   data() {
     return {
       isDialogEditVisible: false,
-      tableId: "",
+      tableId: '',
       rules: {
         name: [
-          { required: true, message: "请输入名字", trigger: "blur" },
-          { min: 2, message: "最小长度2个字符", trigger: "blur" },
+          { required: true, message: '请输入名字', trigger: 'blur' },
+          { min: 2, message: '最小长度2个字符', trigger: 'blur' },
         ],
         phone_code: [
-          { required: true, message: "请输入手机号", trigger: "blur" },
+          { required: true, message: '请输入手机号', trigger: 'blur' },
           {
             pattern: /^[1][3,4,5,7,8,9][0-9]{9}$/,
-            message: "请输入正确的手机号",
-            trigger: "blur",
+            message: '请输入正确的手机号',
+            trigger: 'blur',
           },
         ],
-        contactTime: [{ required: true, message: "请选择时间" }],
+        contactTime: [{ required: true, message: '请选择时间' }],
       },
       statusList: [
         {
-          id: "0",
-          title: "待沟通",
+          id: '0',
+          title: '待沟通',
         },
         {
-          id: "1",
-          title: "已沟通",
+          id: '1',
+          title: '已沟通',
         },
         {
-          id: "2",
-          title: "待定",
+          id: '2',
+          title: '待定',
         },
         {
-          id: "3",
-          title: "已拒绝",
+          id: '3',
+          title: '已拒绝',
         },
       ],
       form: {
-        name: "",
-        phoneCode: "",
-        contact_time1: "",
-        contact_time2: "",
-        status: "",
-        remarks: "",
+        name: '',
+        phone_code: '',
+        contact_time1: '',
+        contact_time2: '',
+        status: '',
+        remarks: '',
       },
-      formLabelWidth: "120px",
+      formLabelWidth: '120px',
     };
   },
   methods: {
     loadingData() {
       this.formData.map((item) => {
         // console.log(item);
-        this.form = item;
-        item.contact_time.replace("-", ",");
-        let time = [];
-        time.push(item.contact_time.replace("-", ","));
-        console.log(time);
-        // console.log(item.contact_time.replace("-", ","));
-        // console.log(item.contact_time.split(",").join());
+        this.form.name = item.name;
+        this.form.phone_code = item.phone_code;
+        this.form.status = item.status;
+        this.form.remarks = item.remarks;
+        let timeList = [];
+        timeList.push(this.time.replace('-', ','));
+        timeList[0].split(',');
+        console.log(timeList[0].split(','));
+        this.form.contact_time1 = timeList[0].split(',')[0];
+        console.log(this.form.contact_time1, 80);
+        this.form.contact_time2 = timeList[0].split(',')[1];
+        console.log(this.form.contact_time2, 70);
         return;
       });
       // console.log(this.form)
@@ -172,7 +164,7 @@ export default {
       try {
         await this.$refs.form.validate();
       } catch {
-        return this.$message.warning("请完善表单");
+        return this.$message.warning('请完善表单');
       }
     },
     cancelDialog() {

@@ -44,9 +44,9 @@
 </template>
 
 <script>
-import { navigation } from "@/router/routes";
+import { navigation } from '@/router/routes';
 export default {
-  name: "Aside",
+  name: 'Aside',
   data() {
     return {
       navigation: navigation,
@@ -58,7 +58,7 @@ export default {
       // this.$router.push({ name: index }).catch((error)=>error);
     },
     iconManagement(iconList) {
-      return iconList && iconList.icon ? iconList.icon : "el-icon-setting";
+      return iconList && iconList.icon ? iconList.icon : 'el-icon-setting';
     },
     handleClose(key, keyPath) {
       console.log(key, keyPath);

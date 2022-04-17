@@ -7,18 +7,10 @@
     >
       <el-form :model="form" :rules="rules" ref="form">
         <div class="top">
-          <el-form-item
-            label="姓名："
-            prop="name"
-            :label-width="formLabelWidth"
-          >
+          <el-form-item label="姓名：" prop="name" :label-width="formLabelWidth">
             <el-input v-model="form.name" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item
-            label="手机号："
-            prop="phoneCode"
-            :label-width="formLabelWidth"
-          >
+          <el-form-item label="手机号：" prop="phoneCode" :label-width="formLabelWidth">
             <el-input v-model="form.phoneCode" autocomplete="off"></el-input>
           </el-form-item>
         </div>
@@ -53,18 +45,16 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="onDialogCancel" size="mini">取 消</el-button>
-        <el-button type="primary" @click="onSubmit()" size="mini"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="onSubmit()" size="mini">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { createReservation } from "@/api/reservation.js";
+import { createReservation } from '@/api/reservation.js';
 export default {
-  name: "ReservationCreate",
+  name: 'ReservationCreate',
   props: {
     isVisible: { type: Boolean, required: true },
   },
@@ -74,7 +64,7 @@ export default {
       console.log(newValue);
     },
     isDialogCreateVisible(newVal) {
-      this.$emit("dialog-change", newVal);
+      this.$emit('dialog-change', newVal);
       console.log(newVal, 22);
     },
   },
@@ -83,15 +73,15 @@ export default {
       isDialogCreateVisible: false,
       rules: {
         name: [
-          { required: true, message: "请输入名字", trigger: "blur" },
-          { min: 2, message: "最小长度2个字符", trigger: "blur" },
+          { required: true, message: '请输入名字', trigger: 'blur' },
+          { min: 2, message: '最小长度2个字符', trigger: 'blur' },
         ],
         phoneCode: [
-          { required: true, message: "请输入手机号", trigger: "blur" },
+          { required: true, message: '请输入手机号', trigger: 'blur' },
           {
             pattern: /^[1][3,4,5,7,8,9][0-9]{9}$/,
-            message: "请输入正确的手机号",
-            trigger: "blur",
+            message: '请输入正确的手机号',
+            trigger: 'blur',
           },
         ],
         date: [{ required: true }],
@@ -115,30 +105,30 @@ export default {
       statusList: [
         {
           value: 0,
-          title: "待沟通",
+          title: '待沟通',
         },
         {
           value: 1,
-          title: "已沟通",
+          title: '已沟通',
         },
         {
           value: 2,
-          title: "待定",
+          title: '待定',
         },
         {
           value: 3,
-          title: "已拒绝",
+          title: '已拒绝',
         },
       ],
       form: {
-        name: "",
-        phoneCode: "",
-        contact_time1: "",
-        contact_time2: "",
-        status: "",
-        remarks: "",
+        name: '',
+        phoneCode: '',
+        contact_time1: '',
+        contact_time2: '',
+        status: '',
+        remarks: '',
       },
-      formLabelWidth: "120px",
+      formLabelWidth: '120px',
     };
   },
   methods: {
@@ -147,24 +137,24 @@ export default {
       try {
         await this.$refs.form.validate();
       } catch {
-        return this.$message.warning("请完善表单");
+        return this.$message.warning('请完善表单');
       }
       try {
         const res = await createReservation({
           name: this.form.name,
           phone_code: this.form.phoneCode,
-          contact_time: this.form.contact_time1 + "-" + this.form.contact_time2,
+          contact_time: this.form.contact_time1 + '-' + this.form.contact_time2,
           remarks: this.form.remarks,
           status: this.form.status,
         });
         if (res.data.code === 200) {
-          this.$emit("submit", true);
-          return this.$message.success("创建成功");
+          this.$emit('submit', true);
+          return this.$message.success('创建成功');
         }
         console.log(res);
       } catch (error) {
-        this.$emit("submit", false);
-        this.$message.error("创建失败");
+        this.$emit('submit', false);
+        this.$message.error('创建失败');
         console.log(error);
         return;
         //

@@ -9,11 +9,7 @@
             <el-input v-model="form.username" placeholder="用户名："></el-input>
           </div>
           <div class="password">
-            <el-input
-              v-model="form.password"
-              placeholder="密码："
-              show-password
-            ></el-input>
+            <el-input v-model="form.password" placeholder="密码：" show-password></el-input>
           </div>
           <div class="button">
             <el-button type="primary" @click="onSubmit">登录</el-button>
@@ -28,22 +24,22 @@
 </template>
 
 <script>
-import image from "@/assets/520.png";
+import image from '@/assets/520.png';
 export default {
-  name: "login",
+  name: 'login',
   data() {
     return {
       img: image,
       form: {
-        username: "",
-        password: "",
+        username: '',
+        password: '',
       },
     };
   },
   methods: {
     onSubmit() {
       // sessionStorage.setItem("token");
-      this.$router.push("./reservation");
+      this.$router.push('./reservation');
     },
   },
 };

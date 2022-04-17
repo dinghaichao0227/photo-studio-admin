@@ -20,10 +20,10 @@
 </template>
 
 <script>
-import Aside from "./Aside.vue";
+import Aside from './Aside.vue';
 
 export default {
-  name: "homeView",
+  name: 'homeView',
   components: {
     Aside,
   },
@@ -32,8 +32,8 @@ export default {
   },
   methods: {
     signOut() {
-      sessionStorage.clear("token");
-      this.$router.push("/login");
+      sessionStorage.clear('token');
+      this.$router.push('/login');
     },
   },
 };

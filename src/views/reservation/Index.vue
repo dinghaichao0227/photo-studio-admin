@@ -1,16 +1,9 @@
 <template>
   <div class="reservation">
     <div class="header">
-      <el-input
-        class="inputText"
-        v-model="search"
-        size="mini"
-        placeholder="输入关键字搜索"
-      />
+      <el-input class="inputText" v-model="search" size="mini" placeholder="输入关键字搜索" />
       <div class="but">
-        <el-button class="butColor" size="mini" @click="onCreate"
-          >创建订单</el-button
-        >
+        <el-button class="butColor" size="mini" @click="onCreate">创建订单</el-button>
         <reservation-create
           :isVisible="isDialogCreateVisible"
           @dialog-change="handleDialogChange"
@@ -21,19 +14,15 @@
     <el-table
       :data="
         tableData.filter(
-          (data) =>
-            !search || data.name.toLowerCase().includes(search.toLowerCase())
+          (data) => !search || data.name.toLowerCase().includes(search.toLowerCase())
         )
       "
       v-loading="isLoading"
       style="width: 100%"
     >
-      <el-table-column label="客户姓名" prop="name" width="100px">
-      </el-table-column>
-      <el-table-column label="客户手机号" prop="phone_code" width="150px">
-      </el-table-column>
-      <el-table-column label="沟通时间" prop="contact_time" width="120px">
-      </el-table-column>
+      <el-table-column label="客户姓名" prop="name" width="100px"> </el-table-column>
+      <el-table-column label="客户手机号" prop="phone_code" width="150px"> </el-table-column>
+      <el-table-column label="沟通时间" prop="contact_time" width="120px"> </el-table-column>
       <el-table-column label="预约状态" prop="status" width="100px">
         <template slot-scope="scope">
           <span v-if="scope.row.status === '0'">待沟通</span>
@@ -52,17 +41,11 @@
           {{ purifyTime(scope.row.updated_at) }}
         </template>
       </el-table-column>
-      <el-table-column label="备注" prop="remarks" width="auto">
-      </el-table-column>
+      <el-table-column label="备注" prop="remarks" width="auto"> </el-table-column>
       <el-table-column align="right">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
-            >Edit</el-button
-          >
-          <el-button
-            size="mini"
-            type="danger"
-            @click="handleDelete(scope.$index, scope.row)"
+          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)"
             >Delete</el-button
           >
         </template>
@@ -80,18 +63,19 @@
     <reservation-edit
       :isEditVisible="isEditDialogVisible"
       :formData="formData"
+      :time="time"
       @dialog-change="handleEditDialog"
     />
   </div>
 </template>
 
 <script>
-import ReservationCreate from "./ReservationCreate.vue";
-import ReservationEdit from "./ReservationEdit.vue";
-import { getReservation } from "@/api/reservation.js";
-import { purifyTime } from "@/utils/Time.js";
+import ReservationCreate from './ReservationCreate.vue';
+import ReservationEdit from './ReservationEdit.vue';
+import { getReservation } from '@/api/reservation.js';
+import { purifyTime } from '@/utils/Time.js';
 export default {
-  name: "Reservation",
+  name: 'Reservation',
   components: {
     ReservationCreate,
     ReservationEdit,
@@ -101,16 +85,17 @@ export default {
       isDialogCreateVisible: false,
       isEditDialogVisible: false,
       isLoading: false,
-      createdTime: "",
-      updatedTime: "",
+      time: '',
+      createdTime: '',
+      updatedTime: '',
       formData: [],
       total: null,
       pageAndSize: {
         page: 1,
-        size: 100,
+        size: 10,
       },
       tableData: [],
-      search: "",
+      search: '',
     };
   },
   methods: {
@@ -134,8 +119,7 @@ export default {
       try {
         const res = await getReservation(this.pageAndSize);
         this.tableData = res.data.date;
-        this.tableData.reverse();
-        this.total = res.data.date.length;
+        this.total = res.data.total;
         if (res.data.code === 200) {
           this.isLoading = false;
           return;
@@ -158,6 +142,7 @@ export default {
       console.log(index, row);
       this.isEditDialogVisible = true;
       this.formData.push(row);
+      this.time = row.contact_time;
       // console.log(this.formData, 77)
     },
     handleDelete(index, row) {
