@@ -22,7 +22,7 @@
         >
           <el-time-select
             placeholder="起始时间"
-            v-model="form.contact_time1"
+            v-model="form.start_time"
             :picker-options="{
               start: '08:30',
               step: '00:15',
@@ -32,12 +32,12 @@
           </el-time-select>
           <el-time-select
             placeholder="结束时间"
-            v-model="form.contact_time2"
+            v-model="form.end_time"
             :picker-options="{
               start: '08:30',
               step: '00:15',
               end: '18:30',
-              minTime: form.contact_time1,
+              minTime: form.startTime,
             }"
           >
           </el-time-select>
@@ -74,6 +74,8 @@
 </template>
 
 <script>
+import { editReservation } from '@/api/reservation.js';
+
 export default {
   name: 'ReservationCreate',
   props: {
@@ -95,20 +97,7 @@ export default {
     return {
       isDialogEditVisible: false,
       tableId: '',
-      rules: {
-        name: [
-          { required: true, message: '请输入名字', trigger: 'blur' },
-          { min: 2, message: '最小长度2个字符', trigger: 'blur' },
-        ],
-        phone_code: [
-          { required: true, message: '请输入手机号', trigger: 'blur' },
-          {
-            pattern: /^[1][3,4,5,7,8,9][0-9]{9}$/,
-            message: '请输入正确的手机号',
-            trigger: 'blur',
-          },
-        ],
-      },
+      rules: {},
       statusList: [
         {
           id: '0',
@@ -130,8 +119,8 @@ export default {
       form: {
         name: '',
         phone_code: '',
-        contact_time1: '9:00',
-        contact_time2: '12:00',
+        startTime: '',
+        endTime: '',
         status: '',
         remarks: '',
       },
@@ -141,6 +130,7 @@ export default {
   methods: {
     loadingData() {
       this.formData.map((item) => {
+        this.tableId = item.id;
         this.form.name = item.name;
         this.form.phone_code = item.phone_code;
         this.form.status = item.status;
@@ -148,17 +138,33 @@ export default {
         let timeList = [];
         timeList.push(item.contact_time.replace('-', ','));
         timeList[0].split(',');
-        this.form.contact_time1 = timeList[0].split(',')[0];
-        this.form.contact_time2 = timeList[0].split(',')[1];
+        this.form.startTime = timeList[0].split(',')[0];
+        this.form.endTime = timeList[0].split(',')[1];
       });
       // console.log(this.form)
     },
     async onSubmit() {
-      this.isDialogEditVisible = true;
+      this.isDialogEditVisible = false;
       try {
-        await this.$refs.form.validate();
-      } catch {
-        return this.$message.warning('请完善表单');
+        const res = await editReservation({
+          id: this.tableId,
+          name: this.form.name,
+          phone_code: this.form.phone_code,
+          contact_time: this.form.startTime + '-' + this.form.endTime,
+          status: this.form.status,
+          remarks: this.form.remarks,
+        });
+        if (res.data.code === 200) {
+          this.$emit('submit', true);
+          return this.$message.success('创建成功');
+        }
+        console.log(res);
+      } catch (error) {
+        this.$emit('submit', false);
+        this.$message.error('创建失败');
+        console.log(error);
+        return;
+        //
       }
     },
     cancelDialog() {

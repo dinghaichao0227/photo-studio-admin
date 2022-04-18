@@ -1,8 +1,8 @@
 <template>
-  <div class="reservationCreate">
+  <div class="ActivityEdit">
     <el-dialog
-      title="创建预约订单"
-      :visible.sync="isDialogCreateVisible"
+      title="编辑预约订单"
+      :visible.sync="isDialogEditVisible"
       @closed="handleDialogClosed"
     >
       <el-form :model="form" :rules="rules" ref="form">
@@ -10,15 +10,15 @@
           <el-form-item label="姓名：" prop="name" :label-width="formLabelWidth">
             <el-input v-model="form.name" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="手机号：" prop="phoneCode" :label-width="formLabelWidth">
-            <el-input v-model="form.phoneCode" autocomplete="off"></el-input>
+          <el-form-item label="手机号：" prop="phone_code" :label-width="formLabelWidth">
+            <el-input v-model="form.phone_code" autocomplete="off"></el-input>
           </el-form-item>
         </div>
         <el-form-item
           class="contactTime"
           label="预约时间："
           :label-width="formLabelWidth"
-          prop="date"
+          prop="contactTime"
         >
           <el-time-select
             placeholder="起始时间"
@@ -42,57 +42,83 @@
           >
           </el-time-select>
         </el-form-item>
+        <div class="bottom">
+          <el-form-item label="状态：" :label-width="formLabelWidth">
+            <el-select v-model="form.status" placeholder="请选择">
+              <el-option
+                v-for="item in statusList"
+                :key="item.id"
+                :label="item.title"
+                :value="item.id"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item class="remarks" label="备注：" :label-width="formLabelWidth">
+            <el-input
+              v-model="form.remarks"
+              maxlength="50"
+              type="textarea"
+              autosize
+              autocomplete="off"
+            ></el-input>
+          </el-form-item>
+        </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="onDialogCancel" size="mini">取 消</el-button>
-        <el-button type="primary" @click="onSubmit()" size="mini">确 定</el-button>
+        <el-button @click="cancelDialog" size="mini">取 消</el-button>
+        <el-button type="primary" @click="onSubmit" size="mini">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { createReservation } from '@/api/reservation.js';
+import { editPlan } from '@/api/plan.js';
+
 export default {
-  name: 'ReservationCreate',
+  name: 'ActivityEdit',
   props: {
-    isVisible: { type: Boolean, required: true },
+    isEditVisible: { type: Boolean, required: true },
+    formData: Array,
+    time: String,
   },
   watch: {
-    isVisible(newValue) {
-      this.isDialogCreateVisible = newValue;
-      console.log(newValue);
+    isEditVisible(newValue) {
+      this.isDialogEditVisible = newValue;
+      // this.loadingData();
     },
-    isDialogCreateVisible(newVal) {
+    isDialogEditVisible(newVal) {
       this.$emit('dialog-change', newVal);
-      console.log(newVal, 22);
+      this.loadingData();
     },
   },
   data() {
     return {
-      isDialogCreateVisible: false,
+      isDialogEditVisible: false,
+      tableId: '',
       rules: {},
       statusList: [
         {
-          value: 0,
+          id: '0',
           title: '待沟通',
         },
         {
-          value: 1,
+          id: '1',
           title: '已沟通',
         },
         {
-          value: 2,
+          id: '2',
           title: '待定',
         },
         {
-          value: 3,
+          id: '3',
           title: '已拒绝',
         },
       ],
       form: {
         name: '',
-        phoneCode: '',
+        phone_code: '',
         startTime: '',
         endTime: '',
         status: '',
@@ -102,20 +128,31 @@ export default {
     };
   },
   methods: {
+    loadingData() {
+      this.formData.map((item) => {
+        this.tableId = item.id;
+        this.form.name = item.name;
+        this.form.phone_code = item.phone_code;
+        this.form.status = item.status;
+        this.form.remarks = item.remarks;
+        let timeList = [];
+        timeList.push(item.contact_time.replace('-', ','));
+        timeList[0].split(',');
+        this.form.startTime = timeList[0].split(',')[0];
+        this.form.endTime = timeList[0].split(',')[1];
+      });
+      // console.log(this.form)
+    },
     async onSubmit() {
-      this.isDialogCreateVisible = false;
+      this.isDialogEditVisible = false;
       try {
-        await this.$refs.form.validate();
-      } catch {
-        return this.$message.warning('请完善表单');
-      }
-      try {
-        const res = await createReservation({
+        const res = await editPlan({
+          id: this.tableId,
           name: this.form.name,
-          phone_code: this.form.phoneCode,
+          phone_code: this.form.phone_code,
           contact_time: this.form.startTime + '-' + this.form.endTime,
-          remarks: this.form.remarks,
           status: this.form.status,
+          remarks: this.form.remarks,
         });
         if (res.data.code === 200) {
           this.$emit('submit', true);
@@ -130,22 +167,21 @@ export default {
         //
       }
     },
-    handleChange(item) {
-      console.log(item);
-    },
-    onDialogCancel() {
-      this.isDialogCreateVisible = false;
-      this.$refs.form.resetFields();
+    cancelDialog() {
+      this.isDialogEditVisible = false;
     },
     handleDialogClosed() {
-      this.$refs.form.resetFields();
+      //
     },
+  },
+  mounted() {
+    this.loadingData();
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.reservationCreate {
+.ActivityEdit {
   display: flex;
   flex-direction: column;
 
@@ -161,10 +197,6 @@ export default {
     ::v-deep .el-input__inner {
       width: 190px;
     }
-
-    // .line {
-    //   margin-left: 150px;
-    // }
   }
 }
 </style>

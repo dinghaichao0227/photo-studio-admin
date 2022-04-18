@@ -25,10 +25,7 @@
       <el-table-column label="沟通时间" prop="contact_time" width="120px"> </el-table-column>
       <el-table-column label="预约状态" prop="status" width="100px">
         <template slot-scope="scope">
-          <span v-if="scope.row.status === '0'">待沟通</span>
-          <span v-if="scope.row.status === '1'">已沟通</span>
-          <span v-if="scope.row.status === '2'">待定</span>
-          <span v-if="scope.row.status === '3'">已拒绝</span>
+          <span>{{ handleStatusName(scope.row.status) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" prop="created_at" width="150">
@@ -44,9 +41,10 @@
       <el-table-column label="备注" prop="remarks" width="auto"> </el-table-column>
       <el-table-column align="right">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
+          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">转派</el-button>
+          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)"
-            >Delete</el-button
+            >删除</el-button
           >
         </template>
       </el-table-column>
@@ -65,6 +63,7 @@
       :formData="formData"
       :time="time"
       @dialog-change="handleEditDialog"
+      @submit="handleSubmit"
     />
   </div>
 </template>
@@ -72,7 +71,7 @@
 <script>
 import ReservationCreate from './ReservationCreate.vue';
 import ReservationEdit from './ReservationEdit.vue';
-import { getReservation } from '@/api/reservation.js';
+import { getReservation, delReservation } from '@/api/reservation.js';
 import { purifyTime } from '@/utils/Time.js';
 export default {
   name: 'Reservation',
@@ -145,8 +144,29 @@ export default {
       this.time = row.contact_time;
       // console.log(this.formData, 77)
     },
-    handleDelete(index, row) {
-      console.log(row);
+    async handleDelete(index, row) {
+      try {
+        const res = await delReservation({
+          id: row.id,
+        });
+        if (res.data.code === 200) {
+          this.getReservationData();
+          return this.$message.success('创建成功');
+        }
+        console.log(res);
+      } catch (error) {
+        this.$message.success('创建成功');
+        return this.getReservationData();
+      }
+    },
+    handleStatusName(status) {
+      const statusNameList = {
+        0: '待沟通',
+        1: '已沟通',
+        2: '待定',
+        3: '已拒绝',
+      };
+      return statusNameList[status];
     },
   },
   mounted() {

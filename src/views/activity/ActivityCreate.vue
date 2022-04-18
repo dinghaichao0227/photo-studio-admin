@@ -1,5 +1,5 @@
 <template>
-  <div class="reservationCreate">
+  <div class="ActivityCreate">
     <el-dialog
       title="创建预约订单"
       :visible.sync="isDialogCreateVisible"
@@ -10,13 +10,10 @@
           <el-form-item label="姓名：" prop="name" :label-width="formLabelWidth">
             <el-input v-model="form.name" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="手机号：" prop="phoneCode" :label-width="formLabelWidth">
-            <el-input v-model="form.phoneCode" autocomplete="off"></el-input>
-          </el-form-item>
         </div>
         <el-form-item
           class="contactTime"
-          label="预约时间："
+          label="活动时间："
           :label-width="formLabelWidth"
           prop="date"
         >
@@ -52,9 +49,9 @@
 </template>
 
 <script>
-import { createReservation } from '@/api/reservation.js';
+import { createPlan } from '@/api/plan.js';
 export default {
-  name: 'ReservationCreate',
+  name: 'ActivityCreate',
   props: {
     isVisible: { type: Boolean, required: true },
   },
@@ -72,31 +69,10 @@ export default {
     return {
       isDialogCreateVisible: false,
       rules: {},
-      statusList: [
-        {
-          value: 0,
-          title: '待沟通',
-        },
-        {
-          value: 1,
-          title: '已沟通',
-        },
-        {
-          value: 2,
-          title: '待定',
-        },
-        {
-          value: 3,
-          title: '已拒绝',
-        },
-      ],
       form: {
         name: '',
-        phoneCode: '',
-        startTime: '',
-        endTime: '',
-        status: '',
-        remarks: '',
+        start_time: '',
+        end_time: '',
       },
       formLabelWidth: '120px',
     };
@@ -110,12 +86,10 @@ export default {
         return this.$message.warning('请完善表单');
       }
       try {
-        const res = await createReservation({
+        const res = await createPlan({
           name: this.form.name,
-          phone_code: this.form.phoneCode,
-          contact_time: this.form.startTime + '-' + this.form.endTime,
-          remarks: this.form.remarks,
-          status: this.form.status,
+          start_time: this.form.start_time,
+          end_time: this.form.end_time,
         });
         if (res.data.code === 200) {
           this.$emit('submit', true);
@@ -145,7 +119,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.reservationCreate {
+.ActivityCreate {
   display: flex;
   flex-direction: column;
 

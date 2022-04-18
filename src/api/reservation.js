@@ -11,3 +11,15 @@ export const createReservation = (data) =>
     method: 'POST',
     data,
   });
+export const editReservation = (data) =>
+  axios({
+    url: '/api/v1/advance/edit',
+    method: 'POST',
+    data,
+  });
+export const delReservation = (data) =>
+  axios({
+    url: '/api/v1/advance/del',
+    method: 'POST',
+    data,
+  });

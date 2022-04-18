@@ -19,26 +19,6 @@
         <i :class="iconManagement(item.meta)"></i>
         <span slot="title">{{ item.meta.title }}</span>
       </el-menu-item>
-      <!-- <el-menu-item index="Reservation">
-        <i class="el-icon-menu"></i>
-        <span slot="title">预约信息管理</span>
-      </el-menu-item>
-      <el-menu-item index="orderForm">
-        <i class="el-icon-document"></i>
-        <span slot="title">订单信息管理</span>
-      </el-menu-item>
-      <el-menu-item index="role">
-        <i class="el-icon-setting"></i>
-        <span slot="title">角色管理</span>
-      </el-menu-item>
-      <el-menu-item index="personnel">
-        <i class="el-icon-setting"></i>
-        <span slot="title">人员管理</span>
-      </el-menu-item>
-      <el-menu-item index="activity">
-        <i class="el-icon-setting"></i>
-        <span slot="title">活动管理</span>
-      </el-menu-item> -->
     </el-menu>
   </div>
 </template>
@@ -54,8 +34,10 @@ export default {
   },
   methods: {
     handleOpen(index) {
-      this.$router.push({ name: index });
-      // this.$router.push({ name: index }).catch((error)=>error);
+      // this.$router.push({ name: index });
+      this.$router.push({ name: index }).catch((error) => {
+        console.log(error);
+      });
     },
     iconManagement(iconList) {
       return iconList && iconList.icon ? iconList.icon : 'el-icon-setting';

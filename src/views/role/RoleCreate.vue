@@ -1,47 +1,12 @@
 <template>
-  <div class="reservationCreate">
-    <el-dialog
-      title="创建预约订单"
-      :visible.sync="isDialogCreateVisible"
-      @closed="handleDialogClosed"
-    >
+  <div class="ro le">
+    <el-dialog title="创建角色" :visible.sync="isDialogCreateVisible" @closed="handleDialogClosed">
       <el-form :model="form" :rules="rules" ref="form">
         <div class="top">
           <el-form-item label="姓名：" prop="name" :label-width="formLabelWidth">
             <el-input v-model="form.name" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="手机号：" prop="phoneCode" :label-width="formLabelWidth">
-            <el-input v-model="form.phoneCode" autocomplete="off"></el-input>
-          </el-form-item>
         </div>
-        <el-form-item
-          class="contactTime"
-          label="预约时间："
-          :label-width="formLabelWidth"
-          prop="date"
-        >
-          <el-time-select
-            placeholder="起始时间"
-            v-model="form.startTime"
-            :picker-options="{
-              start: '08:30',
-              step: '00:15',
-              end: '18:30',
-            }"
-          >
-          </el-time-select>
-          <el-time-select
-            placeholder="结束时间"
-            v-model="form.endTime"
-            :picker-options="{
-              start: '08:30',
-              step: '00:15',
-              end: '18:30',
-              minTime: form.startTime,
-            }"
-          >
-          </el-time-select>
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="onDialogCancel" size="mini">取 消</el-button>
@@ -52,9 +17,9 @@
 </template>
 
 <script>
-import { createReservation } from '@/api/reservation.js';
+import { createRole } from '@/api/role.js';
 export default {
-  name: 'ReservationCreate',
+  name: 'roleCreate',
   props: {
     isVisible: { type: Boolean, required: true },
   },
@@ -72,31 +37,8 @@ export default {
     return {
       isDialogCreateVisible: false,
       rules: {},
-      statusList: [
-        {
-          value: 0,
-          title: '待沟通',
-        },
-        {
-          value: 1,
-          title: '已沟通',
-        },
-        {
-          value: 2,
-          title: '待定',
-        },
-        {
-          value: 3,
-          title: '已拒绝',
-        },
-      ],
       form: {
         name: '',
-        phoneCode: '',
-        startTime: '',
-        endTime: '',
-        status: '',
-        remarks: '',
       },
       formLabelWidth: '120px',
     };
@@ -105,17 +47,8 @@ export default {
     async onSubmit() {
       this.isDialogCreateVisible = false;
       try {
-        await this.$refs.form.validate();
-      } catch {
-        return this.$message.warning('请完善表单');
-      }
-      try {
-        const res = await createReservation({
+        const res = await createRole({
           name: this.form.name,
-          phone_code: this.form.phoneCode,
-          contact_time: this.form.startTime + '-' + this.form.endTime,
-          remarks: this.form.remarks,
-          status: this.form.status,
         });
         if (res.data.code === 200) {
           this.$emit('submit', true);
@@ -145,7 +78,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.reservationCreate {
+.roleCreate {
   display: flex;
   flex-direction: column;
 

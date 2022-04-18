@@ -9,10 +9,10 @@ export const navigation = [
     component: () => import('../views/reservation/Index.vue'),
   },
   {
-    path: 'orderForm',
-    name: 'OrderForm',
+    path: 'order',
+    name: 'order',
     meta: { icon: 'el-icon-menu', title: '订单信息管理' },
-    component: () => import('../views/orderForm/Index.vue'),
+    component: () => import('../views/order/Index.vue'),
   },
   {
     path: 'role',
@@ -21,10 +21,10 @@ export const navigation = [
     component: () => import('../views/role/Index.vue'),
   },
   {
-    path: 'personal',
-    name: 'Personal',
+    path: 'staff',
+    name: 'staff',
     meta: { icon: 'el-icon-user', title: '人员管理' },
-    component: () => import('../views/personal/Index.vue'),
+    component: () => import('../views/staff/Index.vue'),
   },
   {
     path: 'activity',
@@ -46,7 +46,6 @@ export const routes = [
     path: '/login',
     name: 'Login',
     component: Login,
-
-    // component: () => import("../views/login/Index.vue"),
   },
 ];
+console.log(routes);

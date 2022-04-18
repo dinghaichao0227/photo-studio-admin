@@ -1,0 +1,16 @@
+<template>
+  <div class="add"></div>
+</template>
+
+<script>
+export default {
+  name: 'add',
+};
+</script>
+
+<style lang="scss" scoped>
+.add {
+  width: 100%;
+  height: 100%;
+}
+</style>
