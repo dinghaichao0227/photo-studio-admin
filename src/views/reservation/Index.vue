@@ -131,13 +131,12 @@ export default {
         const res = await reqGetReservation(this.pageAndSize);
         this.tableData = res.data.data;
         this.total = res.data.total;
-        if (res.data.code === 200) {
-          this.isLoading = false;
-          return;
-        }
-      } catch {
+        console.log(res)
+      } catch(error) {
         this.isLoading = true;
-        return;
+                console.log(error)
+
+
       }
     },
     handleDialogChange(newVal) {

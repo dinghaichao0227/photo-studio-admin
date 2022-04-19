@@ -36,7 +36,8 @@ export default {
     handleOpen(index) {
       // this.$router.push({ name: index });
       this.$router.push({ name: index }).catch((error) => {
-        console.log(error);
+        return error;
+        // console.log(error);
       });
     },
     iconManagement(iconList) {
