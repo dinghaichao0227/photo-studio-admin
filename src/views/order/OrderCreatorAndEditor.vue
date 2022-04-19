@@ -1,6 +1,12 @@
 <template>
   <el-dialog title="新增弹窗" :visible.sync="isVisible" :close-on-click-modal="false">
     <el-form :model="form" v-loading="isLoading">
+      <el-form-item>
+        <el-select v-model="form.advance_id" placeholder="请选择">
+          <el-option v-for="item in getAdvance" :key="item.id" :label="item.name" :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="活动名称" :label-width="formLabelWidth">
         <el-input v-model="form.name" autocomplete="off"></el-input>
       </el-form-item>
@@ -20,13 +26,15 @@
 
 <script>
 import { asyncTimeout } from '@/utils/helpers';
-// import {reqShowOrder} from '@/api/order';
+import { reqShowOrder } from '@/api/order';
+import { reqGetReservation } from '@/api/reservation';
 
 export default {
   data() {
     return {
       isVisible: false,
       isLoading: false,
+      getAdvance: [],
       params: { pageType: '', orderId: 0 },
       form: {
         name: '',
@@ -41,6 +49,7 @@ export default {
       this.params.pageType = pageType;
       if (pageType === 'EDIT') {
         this.params.orderId = orderId;
+
         this.initOrder();
       }
     },
@@ -49,10 +58,9 @@ export default {
       try {
         this.isLoading = true;
         await asyncTimeout(1000);
-        // const res = await reqShowOrder(this.params.orderId);
-        // console.log(res);
-        this.form.name = '123';
-        this.form.region = 'shanghai';
+        const res = await reqShowOrder(this.params.orderId);
+        // this.form.name = res.data.data.name;
+        console.log(res);
       } finally {
         this.isLoading = false;
       }
@@ -74,6 +82,15 @@ export default {
       this.isVisible = false;
       // this.$emit('success');
     },
+  },
+  async mounted() {
+    try {
+      const params = { page: 1, size: 50 };
+      const res = await reqGetReservation(params);
+      this.getAdvance = res.data.data;
+    } finally {
+      //
+    }
   },
 };
 </script>

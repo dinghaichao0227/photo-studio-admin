@@ -1,30 +1,33 @@
 <template>
-  <div class="role">
-    <div class="header">
-      <el-input class="inputText" v-model="search" size="mini" placeholder="输入关键字搜索" />
-      <div class="but">
-        <el-button class="butColor" size="mini" @click="onCreate">创建订单</el-button>
-        <role-create
-          :isVisible="isDialogCreateVisible"
-          @dialog-change="handleDialogChange"
-          @submit="handleSubmit"
-        />
-      </div>
+  <el-card class="role">
+    <div>
+      <el-button icon="el-icon-plus" size="small" type="primary" @click="onCreate"
+        >创建新订单</el-button
+      >
     </div>
-    <el-table
-      :data="
-        tableData.filter(
-          (data) => !search || data.name.toLowerCase().includes(search.toLowerCase())
-        )
-      "
-      v-loading="isLoading"
-      style="width: 100%"
-    >
+
+    <el-form inline size="mini" class="g-gap">
+      <el-form-item>
+        <el-input placeholder="请输入客户姓名" v-model="form.name" clearable> </el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button plain icon="el-icon-search" @click="onShow" type="primary">Search</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button icon="el-icon-refresh-left" @click="onClear">Reset</el-button>
+      </el-form-item>
+    </el-form>
+    <!-- <role-create
+      :isVisible="isDialogCreateVisible"
+      @dialog-change="handleDialogChange"
+      @submit="handleSubmit"
+    /> -->
+    <el-table :data="tableData" v-loading="isLoading">
       <el-table-column label="ID" prop="id" width="100px"> </el-table-column>
       <el-table-column label="角色姓名" prop="name" width="100px"> </el-table-column>
       <el-table-column align="right">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+          <el-button size="mini" @click="onEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)"
             >删除</el-button
           >
@@ -32,7 +35,7 @@
       </el-table-column>
     </el-table>
     <el-pagination
-      class="pagination"
+      class="g-gap-s g-align-right"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :page-sizes="[5, 10, 20, 50]"
@@ -40,26 +43,20 @@
       :total="total"
     >
     </el-pagination>
-    <role-edit
-      :isEditVisible="isEditDialogVisible"
-      :formData="formData"
-      :time="time"
-      @submit="handleSubmit"
-      @dialog-change="handleEditDialog"
-    />
-  </div>
+    <role-creator-and-editor ref="RoleCreatorAndEditor" @submit="handleCreatedAndEdited" />
+  </el-card>
 </template>
 
 <script>
-import RoleCreate from './RoleCreate.vue';
-import RoleEdit from './RoleEdit.vue';
-import { getRole, delRole } from '@/api/role.js';
+import RoleCreatorAndEditor from './RoleCreatorAndEditor';
+// import RoleCreate from './RoleCreate.vue';
+// import RoleEdit from './RoleEdit.vue';
+import { reqGetRole, reqDelRole } from '@/api/role.js';
 import { purifyTime } from '@/utils/Time.js';
 export default {
   name: 'role',
   components: {
-    RoleCreate,
-    RoleEdit,
+    RoleCreatorAndEditor,
   },
   data() {
     return {
@@ -75,13 +72,27 @@ export default {
         page: 1,
         size: 10,
       },
+      form: {
+        name: '',
+      },
       tableData: [],
       search: '',
     };
   },
   methods: {
+    handleCreatedAndEdited() {
+      this.getRoleData();
+    },
     purifyTime,
-    // time,
+    onShow() {
+      this.tableData = this.tableData.filter(
+        (data) => !this.form.name || data.name.toLowerCase().includes(this.form.name.toLowerCase())
+      );
+      this.total = this.tableData.length;
+    },
+    onClear() {
+      (this.form.name = ''), this.getRoleData();
+    },
     handleSizeChange(val) {
       this.pageAndSize.size = val;
       console.log(`每页 ${val} 条`);
@@ -93,13 +104,10 @@ export default {
 
       console.log(`当前页: ${val}`);
     },
-    handleSubmit() {
-      this.getRoleData();
-    },
     async getRoleData() {
       try {
-        const res = await getRole(this.pageAndSize);
-        this.tableData = res.data.date;
+        const res = await reqGetRole(this.pageAndSize);
+        this.tableData = res.data.data;
         this.total = res.data.total;
         if (res.data.code === 200) {
           this.isLoading = false;
@@ -117,20 +125,20 @@ export default {
       this.isEditDialogVisible = newValue;
     },
     onCreate() {
-      this.isDialogCreateVisible = true;
+      this.$refs.RoleCreatorAndEditor.open('CREATE');
     },
-    handleEdit(index, row) {
-      console.log(index, row);
-      this.isEditDialogVisible = true;
-      this.formData.push(row);
-      this.time = row.contact_time;
+    onEdit(row) {
+      this.$refs.RoleCreatorAndEditor.open('UPDATE', row.id);
+
+      // console.log(index, row);
+      // this.isEditDialogVisible = true;
+      // this.formData.push(row);
+      // this.time = row.contact_time;
       // console.log(this.formData, 77)
     },
     async handleDelete(index, row) {
       try {
-        const res = await delRole({
-          id: row.id,
-        });
+        const res = await reqDelRole(row.id);
         if (res.data.code === 200) {
           this.getRoleData();
           return this.$message.success('删除成功');

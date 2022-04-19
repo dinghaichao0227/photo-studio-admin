@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import { editPlan } from '@/api/plan.js';
+import { reqUpdateActivity } from '@/api/activity.js';
 
 export default {
   name: 'ActivityEdit',
@@ -146,7 +146,7 @@ export default {
     async onSubmit() {
       this.isDialogEditVisible = false;
       try {
-        const res = await editPlan({
+        const res = await reqUpdateActivity({
           id: this.tableId,
           name: this.form.name,
           phone_code: this.form.phone_code,

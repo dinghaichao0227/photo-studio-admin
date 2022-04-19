@@ -37,7 +37,7 @@
               start: '08:30',
               step: '00:15',
               end: '18:30',
-              minTime: form.startTime,
+              minTime: form.start_time,
             }"
           >
           </el-time-select>
@@ -119,8 +119,8 @@ export default {
       form: {
         name: '',
         phone_code: '',
-        startTime: '',
-        endTime: '',
+        start_time: '',
+        end_time: '',
         status: '',
         remarks: '',
       },
@@ -138,10 +138,9 @@ export default {
         let timeList = [];
         timeList.push(item.contact_time.replace('-', ','));
         timeList[0].split(',');
-        this.form.startTime = timeList[0].split(',')[0];
-        this.form.endTime = timeList[0].split(',')[1];
+        this.form.start_time = timeList[0].split(',')[0];
+        this.form.end_time = timeList[0].split(',')[1];
       });
-      // console.log(this.form)
     },
     async onSubmit() {
       this.isDialogEditVisible = false;

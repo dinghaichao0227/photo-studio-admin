@@ -1,5 +1,5 @@
 <template>
-  <el-card class="activity">
+  <el-card class="staff">
     <div>
       <el-button icon="el-icon-plus" size="small" type="primary" @click="onCreate"
         >创建新订单</el-button
@@ -17,28 +17,17 @@
         <el-button icon="el-icon-refresh-left" @click="onClear">Reset</el-button>
       </el-form-item>
     </el-form>
-    <activity-create
-      :isVisible="isDialogCreateVisible"
-      @dialog-change="handleDialogChange"
-      @submit="handleSubmit"
-    />
-    <el-table
-      :data="
-        tableData.filter(
-          (data) => !search || data.name.toLowerCase().includes(search.toLowerCase())
-        )
-      "
-      v-loading="isLoading"
-      style="width: 100%"
-    >
-      <el-table-column label="活动名称" prop="name" width="100px"> </el-table-column>
-      <el-table-column label="开始时间" prop="start_time" width="120px"> </el-table-column>
-      <el-table-column label="结束时间" prop="end_Time" width="120px"> </el-table-column>
-      <el-table-column label="预约状态" prop="status" width="100px">
-        <template slot-scope="scope">
-          <span>{{ handleStatusName(scope.row.status) }}</span>
-        </template>
-      </el-table-column>
+    <!-- <activity-create
+          :isVisible="isDialogCreateVisible"
+          @dialog-change="handleDialogChange"
+          @submit="handleSubmit"
+        /> -->
+    <el-table :data="tableData" v-loading="isLoading" style="width: 100%">
+      <el-table-column label="员工名称" prop="name" width="100px"> </el-table-column>
+      <el-table-column label="手机号" prop="photo_code" width="120px"> </el-table-column>
+      <el-table-column label="角色名称" prop="rule_id" width="120px"> </el-table-column>
+      <el-table-column label="颜色" prop="color" width="100px"></el-table-column>
+      <el-table-column label="状态" prop="status" width="100px"></el-table-column>
       <el-table-column align="right">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -49,7 +38,7 @@
       </el-table-column>
     </el-table>
     <el-pagination
-      class="pagination"
+      class="g-gap-s g-align-right"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :page-sizes="[5, 10, 20, 50]"
@@ -57,26 +46,26 @@
       :total="total"
     >
     </el-pagination>
-    <activity-edit
+    <!-- <activity-edit
       :isEditVisible="isEditDialogVisible"
       :formData="formData"
       :time="time"
       @dialog-change="handleEditDialog"
       @submit="handleSubmit"
-    />
+    /> -->
   </el-card>
 </template>
 
 <script>
-import ActivityCreate from './ActivityCreate.vue';
-import ActivityEdit from './ActivityEdit.vue';
+// import ActivityCreate from './ActivityCreate.vue';
+// import ActivityEdit from './ActivityEdit.vue';
 import { reqGetActivity, reqDelActivity } from '@/api/activity.js';
 import { purifyTime } from '@/utils/Time.js';
 export default {
-  name: 'Reservation',
+  name: 'staff',
   components: {
-    ActivityCreate,
-    ActivityEdit,
+    // ActivityCreate,
+    // ActivityEdit,
   },
   data() {
     return {
@@ -184,33 +173,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.activity {
-  display: flex;
-  flex-direction: column;
-
-  .header {
-    display: flex;
-    justify-content: space-between;
-
-    .inputText {
-      width: 150px;
-    }
-
-    .but {
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: 20px;
-
-      .butColor {
-        background-color: #009688;
-        color: #fff;
-      }
-    }
-  }
-  .pagination {
-    text-align: right;
-  }
-}
-</style>

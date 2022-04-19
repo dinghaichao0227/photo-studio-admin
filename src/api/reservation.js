@@ -1,25 +1,29 @@
 import axios from 'axios';
-export const getReservation = (params) =>
+export const reqGetReservation = (params) =>
   axios({
-    url: '/api/v1/advance/list',
+    url: '/api/v1/intention',
     method: 'GET',
     params,
   });
-export const createReservation = (data) =>
+export const reqStoreReservation = (data) =>
   axios({
-    url: '/api/v1/advance/add',
+    url: '/api/v1/intention',
     method: 'POST',
     data,
   });
-export const editReservation = (data) =>
+export const reqUpdateReservation = (id, data) =>
   axios({
-    url: '/api/v1/advance/edit',
-    method: 'POST',
+    url: `/api/v1/intention${id}`,
+    method: 'PUT',
     data,
   });
-export const delReservation = (data) =>
+export const reqDelReservation = (id) =>
   axios({
-    url: '/api/v1/advance/del',
-    method: 'POST',
-    data,
+    url: `/api/v1/intention/${id}`,
+    method: 'DELETE',
+  });
+export const reqShowReservation = (id) =>
+  axios({
+    url: `/api/v1/intention/${id}`,
+    method: 'GET',
   });

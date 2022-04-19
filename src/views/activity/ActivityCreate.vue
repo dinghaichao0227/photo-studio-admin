@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { createPlan } from '@/api/plan.js';
+import { reqStoreActivity } from '@/api/activity.js';
 export default {
   name: 'ActivityCreate',
   props: {
@@ -86,7 +86,7 @@ export default {
         return this.$message.warning('请完善表单');
       }
       try {
-        const res = await createPlan({
+        const res = await reqStoreActivity({
           name: this.form.name,
           start_time: this.form.start_time,
           end_time: this.form.end_time,

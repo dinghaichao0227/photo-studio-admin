@@ -50,18 +50,12 @@
       :total="total"
     >
     </el-pagination>
-    <!-- <div class="component">
-      <component :is="currentTabComponent" :is-visible="isVisible" @close="handleClose" />
-    </div> -->
-
     <order-creator-and-editor ref="orderCreatorAndEditor" @submit="handleCreatedOrEdited" />
   </el-card>
 </template>
 
 <script>
-// import DialogAdd from './components/add.vue';
-// import DialogEdit from './components/add.vue';
-import { columns as tableColumns } from './config/table-columns.js';
+import { columns as tableColumns } from '@/components/config/table-columns.js';
 import { reqFetchOrders } from '@/api/order.js';
 import OrderCreatorAndEditor from './OrderCreatorAndEditor.vue';
 
@@ -89,7 +83,7 @@ export default {
       const params = { page: this.page, size: this.size };
       const res = await reqFetchOrders(params);
       this.total = res.data.total;
-      this.tableData = res.data.date;
+      this.tableData = res.data.data;
     },
     onCreate() {
       this.$refs.orderCreatorAndEditor.open('CREATE');

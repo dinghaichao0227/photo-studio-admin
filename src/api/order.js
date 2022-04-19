@@ -6,23 +6,22 @@ import axios from 'axios';
 // 列表
 export const reqFetchOrders = (params) =>
   axios({
-    url: '/api/v1/order/list',
-    // url: `/api/v1/orders`,
+    url: '/api/v1/order',
     method: 'GET',
     params,
   });
 
 // 获取单个资源
-export const reqShowOrder = (orderId) =>
+export const reqShowOrder = (id) =>
   axios({
-    url: `/api/v1/orders/${orderId}`,
+    url: `/api/v1/order/${id}`,
     method: 'GET',
   });
 
 // create
 export const reqStoreOrder = (data) =>
   axios({
-    url: `/api/v1/orders`,
+    url: `/api/v1/order`,
     method: 'POST',
     data,
   });
@@ -30,14 +29,14 @@ export const reqStoreOrder = (data) =>
 // update
 export const reqUpdateOrder = (id, data) =>
   axios({
-    url: `/api/v1/orders/${id}`,
+    url: `/api/v1/order/${id}`,
     method: 'PUT',
     data,
   });
 
 export const reqDestroyOrder = (id) =>
   axios({
-    url: `/api/v1/orders/${id}`,
+    url: `/api/v1/order/${id}`,
     method: 'DELETE',
   });
 

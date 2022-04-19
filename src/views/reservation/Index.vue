@@ -1,25 +1,28 @@
 <template>
-  <div class="reservation">
-    <div class="header">
-      <el-input class="inputText" v-model="search" size="mini" placeholder="输入关键字搜索" />
-      <div class="but">
-        <el-button class="butColor" size="mini" @click="onCreate">创建订单</el-button>
-        <reservation-create
-          :isVisible="isDialogCreateVisible"
-          @dialog-change="handleDialogChange"
-          @submit="handleSubmit"
-        />
-      </div>
+  <el-card class="reservation">
+    <div>
+      <el-button icon="el-icon-plus" size="small" type="primary" @click="onCreate"
+        >创建新订单</el-button
+      >
     </div>
-    <el-table
-      :data="
-        tableData.filter(
-          (data) => !search || data.name.toLowerCase().includes(search.toLowerCase())
-        )
-      "
-      v-loading="isLoading"
-      style="width: 100%"
-    >
+
+    <el-form inline size="mini" class="g-gap">
+      <el-form-item>
+        <el-input placeholder="请输入客户姓名" v-model="form.name" clearable> </el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button plain icon="el-icon-search" @click="onShow" type="primary">Search</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button icon="el-icon-refresh-left" @click="onClear">Reset</el-button>
+      </el-form-item>
+    </el-form>
+    <reservation-create
+      :isVisible="isDialogCreateVisible"
+      @dialog-change="handleDialogChange"
+      @submit="handleSubmit"
+    />
+    <el-table :data="tableData" v-loading="isLoading">
       <el-table-column label="客户姓名" prop="name" width="100px"> </el-table-column>
       <el-table-column label="客户手机号" prop="phone_code" width="150px"> </el-table-column>
       <el-table-column label="沟通时间" prop="contact_time" width="120px"> </el-table-column>
@@ -43,17 +46,15 @@
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">转派</el-button>
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)"
-            >删除</el-button
-          >
+          <el-button size="mini" type="danger" @click="handleDelete({ row })">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
     <el-pagination
-      class="pagination"
+      class="g-align-right g-gap-s"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :page-sizes="[5, 10, 20, 50]"
+      :page-sizes="pageSizes"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
     >
@@ -65,13 +66,13 @@
       @dialog-change="handleEditDialog"
       @submit="handleSubmit"
     />
-  </div>
+  </el-card>
 </template>
 
 <script>
 import ReservationCreate from './ReservationCreate.vue';
 import ReservationEdit from './ReservationEdit.vue';
-import { getReservation, delReservation } from '@/api/reservation.js';
+import { reqGetReservation, reqDelReservation } from '@/api/reservation.js';
 import { purifyTime } from '@/utils/Time.js';
 export default {
   name: 'Reservation',
@@ -81,6 +82,9 @@ export default {
   },
   data() {
     return {
+      form: {
+        name: '',
+      },
       isDialogCreateVisible: false,
       isEditDialogVisible: false,
       isLoading: false,
@@ -91,15 +95,23 @@ export default {
       total: null,
       pageAndSize: {
         page: 1,
-        size: 10,
+        size: 50,
       },
+      pageSizes: [50],
       tableData: [],
-      search: '',
     };
   },
   methods: {
     purifyTime,
-    // time,
+    onShow() {
+      this.tableData = this.tableData.filter(
+        (data) => !this.form.name || data.name.toLowerCase().includes(this.form.name.toLowerCase())
+      );
+      this.total = this.tableData.length;
+    },
+    onClear() {
+      (this.form.name = ''), this.getReservationData();
+    },
     handleSizeChange(val) {
       this.pageAndSize.size = val;
       console.log(`每页 ${val} 条`);
@@ -116,8 +128,8 @@ export default {
     },
     async getReservationData() {
       try {
-        const res = await getReservation(this.pageAndSize);
-        this.tableData = res.data.date;
+        const res = await reqGetReservation(this.pageAndSize);
+        this.tableData = res.data.data;
         this.total = res.data.total;
         if (res.data.code === 200) {
           this.isLoading = false;
@@ -144,20 +156,10 @@ export default {
       this.time = row.contact_time;
       // console.log(this.formData, 77)
     },
-    async handleDelete(index, row) {
-      try {
-        const res = await delReservation({
-          id: row.id,
-        });
-        if (res.data.code === 200) {
-          this.getReservationData();
-          return this.$message.success('创建成功');
-        }
-        console.log(res);
-      } catch (error) {
-        this.$message.success('创建成功');
-        return this.getReservationData();
-      }
+    async handleDelete({ row }) {
+      console.log(row);
+      await reqDelReservation(row.id);
+      this.getReservationData();
     },
     handleStatusName(status) {
       const statusNameList = {
@@ -175,32 +177,34 @@ export default {
 };
 </script>
 
+//
 <style lang="scss" scoped>
-.reservation {
-  display: flex;
-  flex-direction: column;
+// .reservation {
+//   display: flex;
+//   flex-direction: column;
 
-  .header {
-    display: flex;
-    justify-content: space-between;
+//   .header {
+//     display: flex;
+//     justify-content: space-between;
 
-    .inputText {
-      width: 150px;
-    }
+//     .inputText {
+//       width: 150px;
+//     }
 
-    .but {
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: 20px;
+//     .but {
+//       display: flex;
+//       justify-content: flex-end;
+//       margin-bottom: 20px;
 
-      .butColor {
-        background-color: #009688;
-        color: #fff;
-      }
-    }
-  }
-  .pagination {
-    text-align: right;
-  }
-}
+//       .butColor {
+//         background-color: #009688;
+//         color: #fff;
+//       }
+//     }
+//   }
+//   .pagination {
+//     text-align: right;
+//   }
+// }
+//
 </style>
