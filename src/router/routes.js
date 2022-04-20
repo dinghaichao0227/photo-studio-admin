@@ -48,4 +48,3 @@ export const routes = [
     component: Login,
   },
 ];
-console.log(routes);

@@ -18,12 +18,14 @@ export const reqUpdateRole = (id, data) =>
     method: 'PUT',
     data,
   });
-export const rquDelRole = (id) =>
+
+export const reqDelRole = (id) =>
   http({
     url: `/v1/role/${id}`,
     method: 'DELETE',
   });
-export const rquShowRole = (id) =>
+
+export const reqShowRole = (id) =>
   http({
     url: `/v1/role/${id}`,
     method: 'GET',

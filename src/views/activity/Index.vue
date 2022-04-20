@@ -1,5 +1,5 @@
 <template>
-  <el-card class="activity">
+  <el-card class="activity" shadow="hover">
     <div>
       <el-button icon="el-icon-plus" size="small" type="primary" @click="onCreate"
         >创建新订单</el-button
@@ -17,34 +17,47 @@
         <el-button icon="el-icon-refresh-left" @click="onClear">Reset</el-button>
       </el-form-item>
     </el-form>
-    <activity-create
-      :isVisible="isDialogCreateVisible"
-      @dialog-change="handleDialogChange"
-      @submit="handleSubmit"
-    />
-    <el-table
-      :data="
-        tableData.filter(
-          (data) => !search || data.name.toLowerCase().includes(search.toLowerCase())
-        )
-      "
-      v-loading="isLoading"
-      style="width: 100%"
-    >
-      <el-table-column label="活动名称" prop="name" width="100px"> </el-table-column>
-      <el-table-column label="开始时间" prop="start_time" width="120px"> </el-table-column>
-      <el-table-column label="结束时间" prop="end_Time" width="120px"> </el-table-column>
-      <el-table-column label="预约状态" prop="status" width="100px">
+    <el-table :data="tableData" v-loading="isLoading">
+      <el-table-column label="活动名称" prop="name" width="250px"> </el-table-column>
+      <el-table-column label="开始时间" prop="start_time" width="250px">
         <template slot-scope="scope">
+          {{ purifyTime(scope.row.start_time) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="结束时间" prop="end_time" width="250px">
+        <template slot-scope="scope">
+          {{ purifyTime(scope.row.end_time) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="活动状态" prop="status" width="100px">
+        <!-- <template slot-scope="scope">
           <span>{{ handleStatusName(scope.row.status) }}</span>
+        </template> -->
+      </el-table-column>
+      <el-table-column label="创建时间" prop="created_at">
+        <template slot-scope="scope">
+          {{ purifyTime(scope.row.created_at) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="修改时间" prop="updated_at">
+        <template slot-scope="scope">
+          {{ purifyTime(scope.row.updated_at) }}
         </template>
       </el-table-column>
       <el-table-column align="right">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)"
-            >删除</el-button
-          >
+          <el-button size="mini" icon="el-icon-edit" @click="onEdit(scope.row)">编辑</el-button>
+          <el-popconfirm title="这是一段内容确定删除吗？" @confirm="onDelete(scope.row)">
+            <el-button
+              style="margin-left: 6px"
+              size="mini"
+              slot="reference"
+              type="danger"
+              plain
+              icon="el-icon-delete"
+              >删除</el-button
+            >
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -57,26 +70,18 @@
       :total="total"
     >
     </el-pagination>
-    <activity-edit
-      :isEditVisible="isEditDialogVisible"
-      :formData="formData"
-      :time="time"
-      @dialog-change="handleEditDialog"
-      @submit="handleSubmit"
-    />
+    <activity-creator-and-editor ref="ActivityCreatorAndEditor" @submit="handleSubmit" />
   </el-card>
 </template>
 
 <script>
-import ActivityCreate from './ActivityCreate.vue';
-import ActivityEdit from './ActivityEdit.vue';
+import ActivityCreatorAndEditor from './ActivityCreatorAndEditor.vue';
 import { reqGetActivity, reqDelActivity } from '@/api/activity.js';
 import { purifyTime } from '@/utils/Time.js';
 export default {
   name: 'Reservation',
   components: {
-    ActivityCreate,
-    ActivityEdit,
+    ActivityCreatorAndEditor,
   },
   data() {
     return {
@@ -90,10 +95,9 @@ export default {
       total: null,
       pageAndSize: {
         page: 1,
-        size: 10,
+        size: 50,
       },
       tableData: [],
-      search: '',
       form: {
         name: '',
       },
@@ -138,46 +142,32 @@ export default {
         return;
       }
     },
-    handleDialogChange(newVal) {
-      this.isDialogCreateVisible = newVal;
-    },
-    handleEditDialog(newValue) {
-      this.isEditDialogVisible = newValue;
-    },
     onCreate() {
-      this.isDialogCreateVisible = true;
+      this.$refs.ActivityCreatorAndEditor.open('创建');
     },
-    handleEdit(index, row) {
-      console.log(index, row);
-      this.isEditDialogVisible = true;
-      this.formData.push(row);
-      this.time = row.contact_time;
-      // console.log(this.formData, 77)
+    onEdit(row) {
+      this.$refs.ActivityCreatorAndEditor.open('编辑', row.id);
     },
-    async handleDelete(index, row) {
+    async onDelete(row) {
       try {
-        const res = await reqDelActivity({
-          id: row.id,
-        });
-        if (res.data.code === 200) {
-          this.getActivityData();
-          return this.$message.success('创建成功');
-        }
-        console.log(res);
+        await reqDelActivity(row.id);
+        this.getActivityData();
+        return this.$message.success('删除成功');
       } catch (error) {
-        this.$message.success('创建成功');
+        this.$message.success('删除成功');
+        console.log(error);
         return this.getActivityData();
       }
     },
-    handleStatusName(status) {
-      const statusNameList = {
-        0: '待沟通',
-        1: '已沟通',
-        2: '待定',
-        3: '已拒绝',
-      };
-      return statusNameList[status];
-    },
+    // handleStatusName(status) {
+    //   const statusNameList = {
+    //     0: '待沟通',
+    //     1: '已沟通',
+    //     2: '待定',
+    //     3: '已拒绝',
+    //   };
+    //   return statusNameList[status];
+    // },
   },
   mounted() {
     this.getActivityData();

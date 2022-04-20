@@ -1,5 +1,5 @@
 <template>
-  <el-card class="reservation">
+  <el-card class="reservation" shadow="hover">
     <div>
       <el-button icon="el-icon-plus" size="small" type="primary" @click="onCreate"
         >创建新订单</el-button
@@ -17,15 +17,17 @@
         <el-button icon="el-icon-refresh-left" @click="onClear">Reset</el-button>
       </el-form-item>
     </el-form>
-    <reservation-create
-      :isVisible="isDialogCreateVisible"
-      @dialog-change="handleDialogChange"
-      @submit="handleSubmit"
-    />
     <el-table :data="tableData" v-loading="isLoading">
-      <el-table-column label="客户姓名" prop="name" width="100px"> </el-table-column>
-      <el-table-column label="客户手机号" prop="phone_code" width="150px"> </el-table-column>
-      <el-table-column label="沟通时间" prop="contact_time" width="120px"> </el-table-column>
+      <el-table-column
+        v-for="item in reservationTableColumns"
+        :key="item.prop"
+        :prop="item.prop"
+        :label="item.label"
+        :width="item.width"
+      />
+      <!-- <el-table-column label="客户姓名" prop="name" width="100px"> </el-table-column> -->
+      <!-- <el-table-column label="客户手机号" prop="phone_code" width="150px"> </el-table-column> -->
+      <!-- <el-table-column label="沟通时间" prop="contact_time" width="120px"> </el-table-column> -->
       <el-table-column label="预约状态" prop="status" width="100px">
         <template slot-scope="scope">
           <span>{{ handleStatusName(scope.row.status) }}</span>
@@ -44,9 +46,21 @@
       <el-table-column label="备注" prop="remarks" width="auto"> </el-table-column>
       <el-table-column align="right">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">转派</el-button>
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete({ row })">删除</el-button>
+          <el-button size="mini" icon="el-icon-connection" @click="onTransfer(scope.row)"
+            >转化</el-button
+          >
+          <el-button size="mini" icon="el-icon-edit" @click="onEdit(scope.row)">编辑</el-button>
+          <el-popconfirm title="您确定删除吗？" @confirm="handleDelete(scope.row)">
+            <el-button
+              style="margin-left: 8px"
+              slot="reference"
+              plain
+              size="small"
+              icon="el-icon-delete"
+              type="danger"
+              >删除</el-button
+            >
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -59,40 +73,37 @@
       :total="total"
     >
     </el-pagination>
-    <reservation-edit
-      :isEditVisible="isEditDialogVisible"
-      :formData="formData"
-      :time="time"
-      @dialog-change="handleEditDialog"
-      @submit="handleSubmit"
-    />
+    <reservation-creator-and-editor ref="ReservationCreatorAndEditor" @submit="handleSubmit" />
+    <order-creator-and-editor ref="OrderCreatorAndEditor" />
   </el-card>
 </template>
 
 <script>
-import ReservationCreate from './ReservationCreate.vue';
-import ReservationEdit from './ReservationEdit.vue';
+import ReservationCreatorAndEditor from './ReservationCreatorAndEditor.vue';
+import OrderCreatorAndEditor from '@/views/order/OrderCreatorAndEditor.vue';
 import { reqGetReservation, reqDelReservation } from '@/api/reservation.js';
+import { columns as reservationTableColumns } from '@/components/config/ReservationTableColumns.js';
+
 import { purifyTime } from '@/utils/Time.js';
 export default {
   name: 'Reservation',
   components: {
-    ReservationCreate,
-    ReservationEdit,
+    ReservationCreatorAndEditor,
+    OrderCreatorAndEditor,
   },
   data() {
     return {
-      form: {
-        name: '',
-      },
-      isDialogCreateVisible: false,
-      isEditDialogVisible: false,
+      reservationTableColumns,
+      visible: false,
       isLoading: false,
       time: '',
       createdTime: '',
       updatedTime: '',
       formData: [],
       total: null,
+      form: {
+        name: '',
+      },
       pageAndSize: {
         page: 1,
         size: 50,
@@ -131,33 +142,27 @@ export default {
         const res = await reqGetReservation(this.pageAndSize);
         this.tableData = res.data.data;
         this.total = res.data.total;
-        console.log(res)
-      } catch(error) {
+        console.log(res);
+      } catch (error) {
         this.isLoading = true;
-                console.log(error)
-
-
+        console.log(error);
       }
     },
-    handleDialogChange(newVal) {
-      this.isDialogCreateVisible = newVal;
-    },
-    handleEditDialog(newValue) {
-      this.isEditDialogVisible = newValue;
-    },
     onCreate() {
-      this.isDialogCreateVisible = true;
+      this.$refs.ReservationCreatorAndEditor.open('创建');
     },
-    handleEdit(index, row) {
-      console.log(index, row);
-      this.isEditDialogVisible = true;
-      this.formData.push(row);
-      this.time = row.contact_time;
-      // console.log(this.formData, 77)
+    onTransfer(row) {
+      this.$refs.OrderCreatorAndEditor.open('转化订单', row.id);
     },
-    async handleDelete({ row }) {
+    onEdit(row) {
+      console.log(row.id, 23);
+      this.$refs.ReservationCreatorAndEditor.open('编辑', row.id);
+    },
+
+    async handleDelete(row) {
       console.log(row);
       await reqDelReservation(row.id);
+      // this.$message.success('删除成功');
       this.getReservationData();
     },
     handleStatusName(status) {

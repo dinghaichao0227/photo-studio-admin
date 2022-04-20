@@ -1,5 +1,5 @@
 <template>
-  <el-card class="staff">
+  <el-card class="staff" shadow="hover">
     <div>
       <el-button icon="el-icon-plus" size="small" type="primary" @click="onCreate"
         >创建新订单</el-button
@@ -8,7 +8,7 @@
 
     <el-form inline size="mini" class="g-gap">
       <el-form-item>
-        <el-input placeholder="请输入客户姓名" v-model="form.name" clearable> </el-input>
+        <el-input placeholder="请输入客员工姓名" v-model="form.name" clearable> </el-input>
       </el-form-item>
       <el-form-item>
         <el-button plain icon="el-icon-search" @click="onShow" type="primary">Search</el-button>
@@ -17,23 +17,39 @@
         <el-button icon="el-icon-refresh-left" @click="onClear">Reset</el-button>
       </el-form-item>
     </el-form>
-    <!-- <activity-create
-          :isVisible="isDialogCreateVisible"
-          @dialog-change="handleDialogChange"
-          @submit="handleSubmit"
-        /> -->
+
     <el-table :data="tableData" v-loading="isLoading" style="width: 100%">
       <el-table-column label="员工名称" prop="name" width="100px"> </el-table-column>
-      <el-table-column label="手机号" prop="photo_code" width="120px"> </el-table-column>
-      <el-table-column label="角色名称" prop="rule_id" width="120px"> </el-table-column>
+      <el-table-column label="手机号" prop="phone_code" width="120px"> </el-table-column>
+      <el-table-column label="角色ID" prop="rule_id" width="120px">
+        <template slot-scope="scope">
+          <span v-for="item in ruleList" :key="item.id" :label="item.name" :value="item.id">
+            <span v-if="scope.row.rule_id == item.id">{{ item.name }}</span></span
+          >
+        </template>
+      </el-table-column>
       <el-table-column label="颜色" prop="color" width="100px"></el-table-column>
-      <el-table-column label="状态" prop="status" width="100px"></el-table-column>
+      <el-table-column label="状态" prop="status" width="100px">
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.status === '1' ? 'success' : 'danger'">{{
+            scope.row.status === '1' ? '在职' : '离职'
+          }}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column align="right">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)"
-            >删除</el-button
-          >
+          <el-button size="mini" icon="el-icon-edit" @click="onEdit(scope.row)">编辑</el-button>
+          <el-popconfirm title="您确定删除吗？" @confirm="onDelete(scope.row)">
+            <el-button
+              style="margin-left: 8px"
+              slot="reference"
+              plain
+              size="small"
+              icon="el-icon-delete"
+              type="danger"
+              >删除</el-button
+            >
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -46,32 +62,27 @@
       :total="total"
     >
     </el-pagination>
-    <!-- <activity-edit
-      :isEditVisible="isEditDialogVisible"
-      :formData="formData"
-      :time="time"
-      @dialog-change="handleEditDialog"
-      @submit="handleSubmit"
-    /> -->
+    <staff-creator-and-editor ref="StaffCreatorAndEditor" @submit="handleSubmit" />
   </el-card>
 </template>
 
 <script>
-// import ActivityCreate from './ActivityCreate.vue';
-// import ActivityEdit from './ActivityEdit.vue';
-import { reqGetActivity, reqDelActivity } from '@/api/activity.js';
+import StaffCreatorAndEditor from './StaffCreatorAndEditor.vue';
+import { reqGetStaff, reqDelStaff } from '@/api/staff.js';
+import { reqGetRole } from '@/api/role.js';
+
 import { purifyTime } from '@/utils/Time.js';
 export default {
   name: 'staff',
   components: {
-    // ActivityCreate,
-    // ActivityEdit,
+    StaffCreatorAndEditor,
   },
   data() {
     return {
       isDialogCreateVisible: false,
       isEditDialogVisible: false,
       isLoading: false,
+      ruleList: [],
       time: '',
       createdTime: '',
       updatedTime: '',
@@ -86,6 +97,7 @@ export default {
       form: {
         name: '',
       },
+      ruleId: null,
     };
   },
   methods: {
@@ -115,7 +127,7 @@ export default {
     },
     async getActivityData() {
       try {
-        const res = await reqGetActivity(this.pageAndSize);
+        const res = await reqGetStaff(this.pageAndSize);
         this.tableData = res.data.date;
         this.total = res.data.total;
         if (res.data.code === 200) {
@@ -127,27 +139,15 @@ export default {
         return;
       }
     },
-    handleDialogChange(newVal) {
-      this.isDialogCreateVisible = newVal;
-    },
-    handleEditDialog(newValue) {
-      this.isEditDialogVisible = newValue;
-    },
     onCreate() {
-      this.isDialogCreateVisible = true;
+      this.$refs.StaffCreatorAndEditor.open('创建员工');
     },
-    handleEdit(index, row) {
-      console.log(index, row);
-      this.isEditDialogVisible = true;
-      this.formData.push(row);
-      this.time = row.contact_time;
-      // console.log(this.formData, 77)
+    onEdit(row) {
+      this.$refs.StaffCreatorAndEditor.open('编辑', row.id);
     },
-    async handleDelete(index, row) {
+    async onDelete(row) {
       try {
-        const res = await reqDelActivity({
-          id: row.id,
-        });
+        const res = await reqDelStaff(row.id);
         if (res.data.code === 200) {
           this.getActivityData();
           return this.$message.success('创建成功');
@@ -158,18 +158,14 @@ export default {
         return this.getActivityData();
       }
     },
-    handleStatusName(status) {
-      const statusNameList = {
-        0: '待沟通',
-        1: '已沟通',
-        2: '待定',
-        3: '已拒绝',
-      };
-      return statusNameList[status];
-    },
   },
-  mounted() {
+  async mounted() {
     this.getActivityData();
+    const res = await reqGetRole({
+      page: 1,
+      size: 100,
+    });
+    this.ruleList = res.data.data;
   },
 };
 </script>

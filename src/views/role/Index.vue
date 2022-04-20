@@ -1,5 +1,5 @@
 <template>
-  <el-card class="role">
+  <el-card class="role" shadow="hover">
     <div>
       <el-button icon="el-icon-plus" size="small" type="primary" @click="onCreate"
         >创建新订单</el-button
@@ -17,19 +17,32 @@
         <el-button icon="el-icon-refresh-left" @click="onClear">Reset</el-button>
       </el-form-item>
     </el-form>
-    <!-- <role-create
-      :isVisible="isDialogCreateVisible"
-      @dialog-change="handleDialogChange"
-      @submit="handleSubmit"
-    /> -->
     <el-table :data="tableData" v-loading="isLoading">
       <el-table-column label="ID" prop="id" width="100px"> </el-table-column>
-      <el-table-column label="角色姓名" prop="name" width="100px"> </el-table-column>
+      <el-table-column label="角色姓名" prop="name" width="150px"> </el-table-column>created_at
+      <el-table-column label="创建时间" prop="created_at">
+        <template slot-scope="scope">
+          {{ purifyTime(scope.row.created_at) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="修改时间" prop="updated_at">
+        <template slot-scope="scope">
+          {{ purifyTime(scope.row.updated_at) }}
+        </template>
+      </el-table-column>
       <el-table-column align="right">
         <template slot-scope="scope">
-          <el-button size="mini" @click="onEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)"
-            >删除</el-button
+          <el-button size="mini" icon="el-icon-edit" @click="onEdit(scope.row)">编辑</el-button>
+          <el-popconfirm title="您确定删除吗？" @confirm="handleDelete(scope.row)">
+            <el-button
+              style="margin-left: 8px"
+              slot="reference"
+              plain
+              size="small"
+              icon="el-icon-delete"
+              type="danger"
+              >删除</el-button
+            ></el-popconfirm
           >
         </template>
       </el-table-column>
@@ -49,9 +62,9 @@
 
 <script>
 import RoleCreatorAndEditor from './RoleCreatorAndEditor';
-// import RoleCreate from './RoleCreate.vue';
-// import RoleEdit from './RoleEdit.vue';
+
 import { reqGetRole, reqDelRole } from '@/api/role.js';
+
 import { purifyTime } from '@/utils/Time.js';
 export default {
   name: 'role',
@@ -80,6 +93,12 @@ export default {
     };
   },
   methods: {
+    async handleDelete(row) {
+      console.log(row);
+      await reqDelRole(row.id);
+      // this.$message.success('删除成功');
+      this.getRoleData();
+    },
     handleCreatedAndEdited() {
       this.getRoleData();
     },
@@ -125,31 +144,16 @@ export default {
       this.isEditDialogVisible = newValue;
     },
     onCreate() {
-      this.$refs.RoleCreatorAndEditor.open('CREATE');
+      this.$refs.RoleCreatorAndEditor.open('创建');
     },
     onEdit(row) {
-      this.$refs.RoleCreatorAndEditor.open('UPDATE', row.id);
+      this.$refs.RoleCreatorAndEditor.open('编辑', row.id);
 
       // console.log(index, row);
       // this.isEditDialogVisible = true;
       // this.formData.push(row);
       // this.time = row.contact_time;
       // console.log(this.formData, 77)
-    },
-    async handleDelete(index, row) {
-      try {
-        const res = await reqDelRole(row.id);
-        if (res.data.code === 200) {
-          this.getRoleData();
-          return this.$message.success('删除成功');
-        }
-        console.log(res);
-      } catch (error) {
-        this.$message.error('删除失败');
-        this.getRoleData();
-        return;
-        //
-      }
     },
     handleStatusName(status) {
       const statusNameList = {

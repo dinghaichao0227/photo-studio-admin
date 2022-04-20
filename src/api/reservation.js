@@ -14,7 +14,7 @@ export const reqStoreReservation = (data) =>
   });
 export const reqUpdateReservation = (id, data) =>
   http({
-    url: `/v1/intention${id}`,
+    url: `/v1/intention/${id}`,
     method: 'PUT',
     data,
   });

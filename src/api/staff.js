@@ -17,7 +17,7 @@ export const reqStoreStaff = (data) =>
     method: 'POST',
     data,
   });
-export const reqUpdatePlan = (id, data) =>
+export const reqUpdateStaff = (id, data) =>
   http({
     url: `/v1/staff/${id}`,
     method: 'PUT',

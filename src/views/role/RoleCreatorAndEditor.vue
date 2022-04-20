@@ -1,10 +1,6 @@
 <template>
   <div class="role">
-    <el-dialog
-      :title="params.dialogType"
-      :visible.sync="isDialogVisible"
-      @closed="handleDialogClosed"
-    >
+    <el-dialog :title="params.dialogType" :visible.sync="isDialogVisible" @closed="onDialogClosed">
       <el-form :model="form" v-loading="isLoading">
         <el-form-item label="姓名：" :label-width="formLabelWidth">
           <el-input v-model="form.name" autocomplete="off" style="width: 200px"></el-input>
@@ -19,7 +15,7 @@
 </template>
 
 <script>
-import { reqStoreRole, reqUpdateRole, rquShowRole } from '@/api/role.js';
+import { reqStoreRole, reqUpdateRole, reqShowRole } from '@/api/role.js';
 import { asyncTimeout } from '@/utils/helpers';
 
 export default {
@@ -29,7 +25,7 @@ export default {
       isLoading: false,
       params: {
         dialogType: '',
-        tableId: 0,
+        roleId: 0,
       },
 
       isDialogVisible: false,
@@ -41,12 +37,13 @@ export default {
     };
   },
   methods: {
-    open(dialogType, tableId) {
+    open(dialogType, roleId) {
       this.isDialogVisible = true;
       this.params.dialogType = dialogType;
-      this.params.tableId = tableId;
-      if (dialogType === 'UPDATE') {
-        console.log(tableId, 78);
+      this.params.roleId = roleId;
+      if (dialogType === '编辑') {
+        this.params.roleId = roleId;
+
         this.initRole();
       }
     },
@@ -54,36 +51,30 @@ export default {
       try {
         this.isLoading = true;
         await asyncTimeout(1000);
-        const res = await rquShowRole(this.params.tableId);
-        this.form.name = res.data.name;
-        console.log(res);
-        // console.log(this.params)
+        const res = await reqShowRole(this.params.roleId);
+        this.form.name = res.data.data.name;
       } finally {
         this.isLoading = false;
       }
     },
-    // initForm() {
-    //   this.form.name = '123';
-    //   console.log(this.form.name)
-    // },
+
     async onSubmit() {
       this.isDialogVisible = false;
       try {
-        if (this.params.dialogType === 'UPDATE') {
+        if (this.params.dialogType === '编辑') {
           const data = { name: this.form.name, status: 1 };
-          await reqUpdateRole({
+          await reqUpdateRole(this.params.roleId, {
             data,
           });
-          this.$message.success('编辑成功');
         } else {
           await reqStoreRole({
             name: this.form.name,
           });
-          this.$emit('submit', true);
-          this.$message.success('创建成功');
         }
+        this.$emit('submit', true);
+        this.$message.success(this.params.dialogType === '编辑' ? '编辑成功' : '创建成功');
       } catch (error) {
-        return this.dialogType === 'UPDATE'
+        return this.dialogType === '编辑'
           ? this.$message.error('编辑失败')
           : this.$message.error('创建失败');
       }
@@ -91,12 +82,12 @@ export default {
     handleChange(item) {
       console.log(item);
     },
-    async onDialogCancel() {
-      const res = await rquShowRole(this.params.tableId);
-      console.log(res);
+    onDialogCancel() {
       this.isDialogVisible = false;
     },
-    handleDialogClosed() {},
+    onDialogClosed() {
+      this.form.name = '';
+    },
   },
 };
 </script>

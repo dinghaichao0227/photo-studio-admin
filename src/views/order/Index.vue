@@ -1,11 +1,5 @@
 <template>
   <el-card shadow="hover">
-    <div>
-      <el-button icon="el-icon-plus" size="small" type="primary" @click="onCreate"
-        >创建新订单</el-button
-      >
-    </div>
-
     <el-form inline size="mini" class="g-gap">
       <el-form-item>
         <el-input placeholder="请输入客户姓名" v-model="form.name" clearable> </el-input>
@@ -20,7 +14,7 @@
 
     <el-table :data="tableData">
       <el-table-column
-        v-for="item in tableColumns"
+        v-for="item in orderTableColumns"
         :key="item.prop"
         :prop="item.prop"
         :label="item.label"
@@ -33,8 +27,15 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="100">
         <template slot-scope="scope">
-          <el-button @click="onEdit(scope.row)" type="text" size="small">编辑</el-button>
-          <el-button @click="onDelete(scope.row)" type="text" size="small">删除</el-button>
+          <el-button @click="onEdit(scope.row)" type="text" size="small" icon="el-icon-edit"
+            >转派</el-button
+          >
+          <el-button @click="onEdit(scope.row)" type="text" size="small" icon="el-icon-edit"
+            >编辑</el-button
+          >
+          <el-button @click="onDelete(scope.row)" type="text" size="small" icon="el-icon-delete"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -55,8 +56,8 @@
 </template>
 
 <script>
-import { columns as tableColumns } from '@/components/config/table-columns.js';
-import { reqFetchOrders } from '@/api/order.js';
+import { columns as orderTableColumns } from '@/components/config/TableColumns.js';
+import { reqFetchOrders, reqDestroyOrder } from '@/api/order.js';
 import OrderCreatorAndEditor from './OrderCreatorAndEditor.vue';
 
 export default {
@@ -65,13 +66,13 @@ export default {
   },
   data() {
     return {
-      tableColumns,
+      orderTableColumns,
       form: {
         name: '',
       },
       tableData: [],
       page: 1,
-      size: 10,
+      size: 50,
       total: 0,
     };
   },
@@ -85,19 +86,15 @@ export default {
       this.total = res.data.total;
       this.tableData = res.data.data;
     },
-    onCreate() {
-      this.$refs.orderCreatorAndEditor.open('CREATE');
-      // this.currentTabComponent = 'DialogAdd';
-      // this.isVisible = true;
-    },
     onEdit(row) {
-      this.$refs.orderCreatorAndEditor.open('EDIT', row.id);
+      this.$refs.orderCreatorAndEditor.open('编辑', row.id);
 
       // this.currentTabComponent = 'DialogEdit';
       // this.isVisible = true;
     },
-    onDelete() {
-      console.log('onDelete');
+    async onDelete(row) {
+      await reqDestroyOrder(row.id);
+      this.$message.success('删除成功');
     },
     handleClose(opt) {
       this.currentTabComponent = '';

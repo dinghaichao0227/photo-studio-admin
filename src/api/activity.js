@@ -7,7 +7,7 @@ export const reqGetActivity = (params) =>
   });
 export const reqShowActivity = (id) =>
   http({
-    url: `/api/v1/activity/${id}`,
+    url: `/v1/activity/${id}`,
     method: 'GET',
   });
 export const reqStoreActivity = (data) =>
