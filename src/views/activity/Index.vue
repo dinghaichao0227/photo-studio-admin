@@ -154,7 +154,7 @@ export default {
         this.getActivityData();
         return this.$message.success('删除成功');
       } catch (error) {
-        this.$message.success('删除成功');
+        this.$message.success('删除失败');
         console.log(error);
         return this.getActivityData();
       }

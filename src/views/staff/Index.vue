@@ -150,11 +150,11 @@ export default {
         const res = await reqDelStaff(row.id);
         if (res.data.code === 200) {
           this.getActivityData();
-          return this.$message.success('创建成功');
+          return this.$message.success('删除成功');
         }
         console.log(res);
       } catch (error) {
-        this.$message.success('创建成功');
+        this.$message.success('删除失败');
         return this.getActivityData();
       }
     },
