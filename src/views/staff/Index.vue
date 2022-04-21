@@ -28,7 +28,15 @@
           >
         </template>
       </el-table-column>
-      <el-table-column label="颜色" prop="color" width="100px"></el-table-column>
+      <el-table-column label="颜色" prop="color" width="100px">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            circle
+            :style="{ background: isColor ? scope.row.color : '' }"
+          ></el-button>
+        </template>
+      </el-table-column>
       <el-table-column label="状态" prop="status" width="100px">
         <template slot-scope="scope">
           <el-tag :type="scope.row.status === '1' ? 'success' : 'danger'">{{
@@ -79,6 +87,7 @@ export default {
   },
   data() {
     return {
+      isColor: true,
       isDialogCreateVisible: false,
       isEditDialogVisible: false,
       isLoading: false,

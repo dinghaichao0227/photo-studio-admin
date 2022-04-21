@@ -27,7 +27,7 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="100">
         <template slot-scope="scope">
-          <el-button @click="onEdit(scope.row)" type="text" size="small" icon="el-icon-edit"
+          <el-button @click="onTransfer(scope.row)" type="text" size="small" icon="el-icon-edit"
             >转派</el-button
           >
           <el-button @click="onEdit(scope.row)" type="text" size="small" icon="el-icon-edit"
@@ -52,6 +52,7 @@
     >
     </el-pagination>
     <order-creator-and-editor ref="orderCreatorAndEditor" @submit="handleCreatedOrEdited" />
+    <drawer-list ref="DrawerList" />
   </el-card>
 </template>
 
@@ -59,10 +60,12 @@
 import { columns as orderTableColumns } from '@/components/config/TableColumns.js';
 import { reqFetchOrders, reqDestroyOrder } from '@/api/order.js';
 import OrderCreatorAndEditor from './OrderCreatorAndEditor.vue';
+import DrawerList from './DrawerList.vue';
 
 export default {
   components: {
     OrderCreatorAndEditor,
+    DrawerList,
   },
   data() {
     return {
@@ -85,6 +88,9 @@ export default {
       const res = await reqFetchOrders(params);
       this.total = res.data.total;
       this.tableData = res.data.data;
+    },
+    onTransfer(row) {
+      this.$refs.DrawerList.open(row);
     },
     onEdit(row) {
       this.$refs.orderCreatorAndEditor.open('编辑', row.id);

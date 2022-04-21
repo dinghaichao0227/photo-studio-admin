@@ -55,7 +55,7 @@
               style="margin-left: 8px"
               slot="reference"
               plain
-              size="small"
+              size="mini"
               icon="el-icon-delete"
               type="danger"
               >删除</el-button
@@ -152,11 +152,12 @@ export default {
       this.$refs.ReservationCreatorAndEditor.open('创建');
     },
     onTransfer(row) {
-      this.$refs.OrderCreatorAndEditor.open('转化订单', row.id);
+      console.log(row.name, row.phone_code);
+      this.$refs.OrderCreatorAndEditor.open('转化订单', row.id, row.name, row.phone_code);
     },
     onEdit(row) {
       console.log(row.id, 23);
-      this.$refs.ReservationCreatorAndEditor.open('编辑', row.id);
+      this.$refs.ReservationCreatorAndEditor.open('编辑', row.id, row.name);
     },
 
     async handleDelete(row) {

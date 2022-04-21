@@ -24,7 +24,8 @@
           </el-form-item>
         </div>
         <el-form-item label="颜色：" :label-width="formLabelWidth">
-          <el-input v-model="form.color" autocomplete="off" style="width: 440px"></el-input>
+          <el-color-picker v-model="form.color"></el-color-picker>
+          <!-- <el-input v-model="form.color" autocomplete="off" style="width: 440px"></el-input> -->
         </el-form-item>
         <el-form-item label="状态：" :label-width="formLabelWidth">
           <el-radio-group v-model="form.status" @change="onStatus">
