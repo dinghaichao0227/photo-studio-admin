@@ -8,6 +8,7 @@
     &-s{
       margin-top: 8px;
     }
+
   }
 
   // 对齐
@@ -17,10 +18,30 @@
     &-right { text-align: right; }
   }
 
+  // 布局
   &-width {
     width: 440px;
   }
   &-flex {
     display: flex;
+    &-list {
+      display: flex;
+      flex-direction: column;
+      align-items:space-between;
+      // justify-content: center;
+    }
+  }
+
+  //字体大小
+  &-size {
+    &-l {
+      font-size: 26px;
+      font-weight: 900;
+    }
+    &-m {
+      font-size: 20px;
+      font-weight: 600;
+
+    }
   }
 }

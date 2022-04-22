@@ -55,7 +55,7 @@ export const columns = [
     width: '100',
   },
   {
-    prop: 'plan_name',
+    prop: 'activity_name',
     label: '参与活动',
     width: '100',
   },
@@ -63,5 +63,10 @@ export const columns = [
     prop: 'staff_name',
     label: '负责人',
     width: '100',
+  },
+  {
+    prop: 'remarks',
+    label: '备注',
+    width: '260',
   },
 ];

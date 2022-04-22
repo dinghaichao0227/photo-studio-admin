@@ -65,7 +65,7 @@
       class="g-gap-s g-align-right"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :page-sizes="[5, 10, 20, 50]"
+      :page-sizes="pageSizes"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
     >
@@ -97,6 +97,7 @@ export default {
       updatedTime: '',
       formData: [],
       total: null,
+      pageSizes: [50, 100],
       pageAndSize: {
         page: 1,
         size: 10,
@@ -118,23 +119,23 @@ export default {
       this.total = this.tableData.length;
     },
     onClear() {
-      (this.form.name = ''), this.getReservationData();
+      (this.form.name = ''), this.getStaffData();
     },
     handleSizeChange(val) {
       this.pageAndSize.size = val;
       console.log(`每页 ${val} 条`);
-      this.getActivityData();
+      this.getStaffData();
     },
     handleCurrentChange(val) {
       this.pageAndSize.page = val;
-      this.getActivityData();
+      this.getStaffData();
 
       console.log(`当前页: ${val}`);
     },
     handleSubmit() {
-      this.getActivityData();
+      this.getStaffData();
     },
-    async getActivityData() {
+    async getStaffData() {
       try {
         const res = await reqGetStaff(this.pageAndSize);
         this.tableData = res.data.date;
@@ -158,18 +159,19 @@ export default {
       try {
         const res = await reqDelStaff(row.id);
         if (res.data.code === 200) {
-          this.getActivityData();
+          this.getStaffData();
           return this.$message.success('删除成功');
         }
         console.log(res);
       } catch (error) {
         this.$message.success('删除失败');
-        return this.getActivityData();
+        return this.getStaffData();
       }
     },
   },
   async mounted() {
-    this.getActivityData();
+    this.getStaffData();
+    this.getStaffData();
     const res = await reqGetRole({
       page: 1,
       size: 100,

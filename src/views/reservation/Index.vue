@@ -74,7 +74,8 @@
     >
     </el-pagination>
     <reservation-creator-and-editor ref="ReservationCreatorAndEditor" @submit="handleSubmit" />
-    <order-creator-and-editor ref="OrderCreatorAndEditor" />
+    <order-creator-and-editor ref="OrderTransfer" />
+    <!-- <order-creator-and-editor ref="OrderCreatorAndEditor" /> -->
   </el-card>
 </template>
 
@@ -108,7 +109,7 @@ export default {
         page: 1,
         size: 50,
       },
-      pageSizes: [50],
+      pageSizes: [50, 100],
       tableData: [],
     };
   },
@@ -152,12 +153,11 @@ export default {
       this.$refs.ReservationCreatorAndEditor.open('创建');
     },
     onTransfer(row) {
-      console.log(row.name, row.phone_code);
-      this.$refs.OrderCreatorAndEditor.open('转化订单', row.id, row.name, row.phone_code);
+      this.$refs.OrderTransfer.open('转化订单', row.id, row.id, row.name, row.phone_code);
     },
     onEdit(row) {
       console.log(row.id, 23);
-      this.$refs.ReservationCreatorAndEditor.open('编辑', row.id, row.name);
+      this.$refs.ReservationCreatorAndEditor.open('编辑', row.id, row.name, row.phone_code);
     },
 
     async handleDelete(row) {
@@ -181,35 +181,3 @@ export default {
   },
 };
 </script>
-
-//
-<style lang="scss" scoped>
-// .reservation {
-//   display: flex;
-//   flex-direction: column;
-
-//   .header {
-//     display: flex;
-//     justify-content: space-between;
-
-//     .inputText {
-//       width: 150px;
-//     }
-
-//     .but {
-//       display: flex;
-//       justify-content: flex-end;
-//       margin-bottom: 20px;
-
-//       .butColor {
-//         background-color: #009688;
-//         color: #fff;
-//       }
-//     }
-//   }
-//   .pagination {
-//     text-align: right;
-//   }
-// }
-//
-</style>

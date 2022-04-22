@@ -4,7 +4,7 @@
       <el-form :model="form" v-loading="isLoading">
         <div class="top">
           <el-form-item label="姓名：" prop="name" :label-width="formLabelWidth">
-            <el-input v-model="form.name" autocomplete="off"></el-input>
+            <el-input v-model="form.name" autocomplete="off" style="width: 200px"></el-input>
           </el-form-item>
         </div>
         <el-form-item
@@ -14,7 +14,6 @@
           prop="date"
         >
           <div class="block">
-            <span class="demonstration">起始日期时刻为 12:00:00，结束日期时刻为 08:00:00</span>
             <el-date-picker
               v-model="form.contact_time"
               type="datetimerange"

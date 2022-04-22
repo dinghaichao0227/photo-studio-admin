@@ -8,7 +8,7 @@
 
     <el-form inline size="mini" class="g-gap">
       <el-form-item>
-        <el-input placeholder="请输入客户姓名" v-model="form.name" clearable> </el-input>
+        <el-input placeholder="请输入角色姓名" v-model="form.name" clearable> </el-input>
       </el-form-item>
       <el-form-item>
         <el-button plain icon="el-icon-search" @click="onShow" type="primary">Search</el-button>
@@ -51,7 +51,7 @@
       class="g-gap-s g-align-right"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :page-sizes="[5, 10, 20, 50]"
+      :page-sizes="pageSizes"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
     >
@@ -81,6 +81,7 @@ export default {
       updatedTime: '',
       formData: [],
       total: null,
+      pageSizes: [50, 100],
       pageAndSize: {
         page: 1,
         size: 10,

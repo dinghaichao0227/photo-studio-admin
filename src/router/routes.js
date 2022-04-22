@@ -47,4 +47,9 @@ export const routes = [
     name: 'Login',
     component: Login,
   },
+  {
+    path: '/404',
+    name: '404',
+    component: () => import('../views/error/404.vue'),
+  },
 ];

@@ -4,10 +4,10 @@
       <el-form :model="form" v-loading="isLoading">
         <div class="top">
           <el-form-item label="员工姓名：" :label-width="formLabelWidth">
-            <el-input v-model="form.name" autocomplete="off" style="width: 440px"></el-input>
+            <el-input v-model="form.name" autocomplete="off" style="width: 200px"></el-input>
           </el-form-item>
           <el-form-item label="手机号：" :label-width="formLabelWidth">
-            <el-input v-model="form.phone_code" autocomplete="off" style="width: 440px"></el-input>
+            <el-input v-model="form.phone_code" autocomplete="off" style="width: 200px"></el-input>
           </el-form-item>
         </div>
         <div class="bottom">

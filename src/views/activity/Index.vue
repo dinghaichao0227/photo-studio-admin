@@ -8,7 +8,7 @@
 
     <el-form inline size="mini" class="g-gap">
       <el-form-item>
-        <el-input placeholder="请输入客户姓名" v-model="form.name" clearable> </el-input>
+        <el-input placeholder="请输入活动姓名" v-model="form.name" clearable> </el-input>
       </el-form-item>
       <el-form-item>
         <el-button plain icon="el-icon-search" @click="onShow" type="primary">Search</el-button>
@@ -65,7 +65,7 @@
       class="pagination"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :page-sizes="[5, 10, 20, 50]"
+      :page-sizes="pageSizes"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
     >
@@ -93,6 +93,7 @@ export default {
       updatedTime: '',
       formData: [],
       total: null,
+      pageSizes: [50, 100],
       pageAndSize: {
         page: 1,
         size: 50,
@@ -112,7 +113,7 @@ export default {
       this.total = this.tableData.length;
     },
     onClear() {
-      (this.form.name = ''), this.getReservationData();
+      (this.form.name = ''), this.getActivityData();
     },
     handleSizeChange(val) {
       this.pageAndSize.size = val;
@@ -152,22 +153,14 @@ export default {
       try {
         await reqDelActivity(row.id);
         this.getActivityData();
-        return this.$message.success('删除成功');
+        this.$message.success('删除成功');
+        this.getActivityData();
       } catch (error) {
         this.$message.success('删除失败');
         console.log(error);
-        return this.getActivityData();
+        this.getActivityData();
       }
     },
-    // handleStatusName(status) {
-    //   const statusNameList = {
-    //     0: '待沟通',
-    //     1: '已沟通',
-    //     2: '待定',
-    //     3: '已拒绝',
-    //   };
-    //   return statusNameList[status];
-    // },
   },
   mounted() {
     this.getActivityData();

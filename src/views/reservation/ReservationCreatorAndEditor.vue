@@ -86,6 +86,8 @@ export default {
       params: {
         dialogType: '',
         reservationID: 0,
+        reservationName: '',
+        reservationPhoneCode: '',
       },
       rules: {},
       statusList: [
@@ -118,12 +120,15 @@ export default {
     };
   },
   methods: {
-    open(dialogType, reservationID) {
+    open(dialogType, reservationID, reservationName, reservationPhoneCode) {
       this.isDialogVisible = true;
       this.params.dialogType = dialogType;
       this.params.reservationID = reservationID;
       if (dialogType === '编辑') {
         this.params.reservationID = reservationID;
+        this.params.reservationName = reservationName;
+        this.params.reservationPhoneCode = reservationPhoneCode;
+        console.log(reservationID, reservationName, reservationPhoneCode);
         this.initReservation();
       }
     },
@@ -136,7 +141,7 @@ export default {
         timeList.push(res.data.data.contact_time.replace('-', ','));
         timeList[0].split(',');
         this.form.name = res.data.data.name;
-        this.form.phoneCode = res.data.data.phone_code;
+        this.form.phone_code = res.data.data.phone_code;
         this.form.startTime = timeList[0].split(',')[0];
         this.form.endTime = timeList[0].split(',')[1];
         this.form.status = res.data.data.status;
