@@ -2,7 +2,7 @@
   <div class="role">
     <el-dialog :title="params.dialogType" :visible.sync="isDialogVisible" @closed="onDialogClosed">
       <el-form :model="form" v-loading="isLoading">
-        <el-form-item label="姓名：" :label-width="formLabelWidth">
+        <el-form-item label="名称：" :label-width="formLabelWidth">
           <el-input v-model="form.name" autocomplete="off" style="width: 200px"></el-input>
         </el-form-item>
       </el-form>
@@ -63,9 +63,7 @@ export default {
       try {
         if (this.params.dialogType === '编辑') {
           const data = { name: this.form.name, status: 1 };
-          await reqUpdateRole(this.params.roleId, {
-            data,
-          });
+          await reqUpdateRole(this.params.roleId, data);
         } else {
           await reqStoreRole({
             name: this.form.name,
