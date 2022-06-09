@@ -13,6 +13,21 @@
         <Aside />
       </el-aside>
       <el-main class="homeView-container-main">
+        <el-tabs
+          v-model="editableTabsValue"
+          type="card"
+          :closable="isCloable"
+          @tab-remove="removeTab"
+          @tab-click="onClickTab"
+        >
+          <el-tab-pane
+            v-for="item in editableTabs"
+            :key="item.path"
+            :label="item.meta.title"
+            :name="item.name"
+          >
+          </el-tab-pane>
+        </el-tabs>
         <router-view />
       </el-main>
     </el-container>
@@ -20,6 +35,8 @@
 </template>
 
 <script>
+// @ts-nocheck
+import { mapState, mapMutations } from 'vuex';
 import Aside from './Aside.vue';
 
 export default {
@@ -27,15 +44,70 @@ export default {
   components: {
     Aside,
   },
+  computed: {
+    ...mapState({
+      editableTabs: (state) => state.Tabs.editableTabs,
+    }),
+    editableTabsValue: {
+      get() {
+        return this.$store.state.Tabs.editableTabsValue;
+      },
+      set(val) {
+        this.SET_VALUE(val);
+      },
+    },
+    isCloable() {
+      return this.editableTabs.length === 1 ? false : true;
+    },
+  },
+  watch: {
+    $route(val) {
+      this.ADD_TABS(val);
+      this.SET_VALUE(this.$route.name);
+    },
+  },
   data() {
-    return {};
+    return {
+      tabRouter: [],
+    };
   },
   methods: {
+    ...mapMutations(['ADD_TABS', 'SET_VALUE', 'REMOVE_TABS_NAME']),
+
     signOut() {
       sessionStorage.clear('token');
       this.$router.push('/login');
     },
+    onClickTab(tab) {
+      console.log(tab);
+      this.$router.push(tab.name);
+    },
+    removeTab(tabName) {
+      const isActive = this.editableTabsValue === tabName ? true : false;
+      let tabList = this.editableTabs.findIndex((tab) => tab.name === tabName);
+      console.log(tabList, 8764);
+      if (isActive) {
+        if (tabList === 0) {
+          this.REMOVE_TABS_NAME(tabName);
+          this.editableTabsValue = this.editableTabs[0].name;
+          this.$router.push(this.editableTabs[0].name);
+        }
+        if (tabList === this.editableTabs.length - 1) {
+          this.REMOVE_TABS_NAME(tabName);
+          this.editableTabsValue = this.editableTabs[this.editableTabs.length - 1].name;
+          this.$router.push(this.editableTabs[this.editableTabs.length - 1].name);
+        }
+        if (tabList) {
+          this.REMOVE_TABS_NAME(tabName);
+          this.editableTabsValue = this.editableTabs[tabList - 1].name;
+          this.$router.push(this.editableTabs[tabList - 1].name);
+        }
+      } else {
+        this.REMOVE_TABS_NAME(tabName);
+      }
+    },
   },
+  mounted() {},
 };
 </script>
 
