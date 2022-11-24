@@ -1,9 +1,14 @@
 <template>
   <div class="aside">
+    <div class="icon" @click="clickExtend">
+      <i v-if="isCollapse" class="el-icon-s-fold"></i>
+      <i v-else class="el-icon-s-unfold"></i>
+    </div>
     <el-menu
       :default-active="$route.name"
       unique-opened
       :router="true"
+      :collapse="isCollapse"
       class="el-menu-vertical-demo"
       @select="handleOpen"
       background-color="#EEEEEE"
@@ -30,9 +35,13 @@ export default {
   data() {
     return {
       navigation: navigation,
+      isCollapse: false,
     };
   },
   methods: {
+    clickExtend() {
+      this.isCollapse = !this.isCollapse;
+    },
     handleOpen(index) {
       // this.$router.push({ name: index });
       this.$router.push({ name: index }).catch((error) => {
@@ -51,6 +60,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.icon {
+  text-align: center;
+  line-height: 75px;
+}
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+  width: 200px;
+  min-height: 400px;
+}
 .el-menu-vertical-demo {
   border-right: none;
 }

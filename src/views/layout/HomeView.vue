@@ -1,6 +1,6 @@
 <template>
   <div class="homeView">
-    <el-header class="homeView-header">
+    <el-header class="homeView-header" height="40px">
       <div class="homeView-header-left">
         <h3>相森记</h3>
       </div>
@@ -9,7 +9,7 @@
       </div>
     </el-header>
     <el-container class="homeView-container">
-      <el-aside class="homeView-container-aside" width="200px">
+      <el-aside class="homeView-container-aside" width="auto">
         <Aside />
       </el-aside>
       <el-main class="homeView-container-main">
@@ -120,7 +120,6 @@ export default {
   overflow: hidden;
 
   &-header {
-    height: 40px;
     background-color: #000;
     color: #fff;
     display: flex;
